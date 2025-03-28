@@ -3,31 +3,33 @@ package com.example.bookshop.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "books")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String title;
     private String author;
     private String publisher;
     private double price;
     private String category;
     private String isbn;
-    private String imageUrl; // URL or path to the associated image
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private String image;
 
-    public Book() {}
+    public Book() {
+    }
 
-    public Book(String title, String author, String publisher, double price, String category, String isbn, String imageUrl) {
+    public Book(String title, String author, String publisher, double price, String category, String isbn,
+            String image) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.price = price;
         this.category = category;
         this.isbn = isbn;
-        this.imageUrl = imageUrl;
+        this.image = image;
     }
 
     public Long getId() {
@@ -86,11 +88,11 @@ public class Book {
         this.isbn = isbn;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getimage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setimage(String image) {
+        this.image = image;
     }
 }
