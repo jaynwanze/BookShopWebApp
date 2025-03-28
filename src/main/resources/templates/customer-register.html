@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Customer Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container grid mt-5 text-center flex justify-center">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Customer Register</h5>
+                <form th:action="@{/api/auth/register/customer}" method="post">
+                    <label>Name:</label>
+                    <input class="mb-3" type="text" name="name" required />
+                    <br>
+                    <label>Email:</label>
+                    <input class="mb-3" type="email" name="email" required />
+                    <br>
+                    <label>Password:</label>
+                    <input class="mb-3" type="password" name="password" required />
+                    <br>
+                    <button class="btn btn-success mb-3" type="submit">Submit</button>
+                </form>
+                <a href="/login/customer" class="btn btn-primary mb-1">Go To Login Page</a>
+                <div class="mb-3 mt-3" `>
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }, 3000);
+    };
+</script>

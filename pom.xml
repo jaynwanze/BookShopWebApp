@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ggerestapi</artifactId>
+	<artifactId>bookshop</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>BookShopWebApp</name>
 	<description>Spring Boot WebService for BookShopWebAp </description>

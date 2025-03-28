@@ -8,24 +8,29 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class PageController {
 
+    @GetMapping("/login")
+    public String indexPage() {
+        return "login";
+    }
+
     @GetMapping("/login/customer")
     public String loginAdministartorPage() {
-        return "login-customer";
+        return "customer-login";
     }
 
     @GetMapping("/register/customer")
     public String registerCustomerPage() {
-        return "register-customer";
+        return "customer-register";
     }
 
     @GetMapping("/login/administrator")
     public String loginAdministratorPage() {
-        return "login-administrator";
+        return "admin-login";
     }
 
     @GetMapping("/register/administrator")
     public String registerAdministratorPage() {
-        return "register-administrator";
+        return "admin-register";
     }
 
     @GetMapping("/logout")
