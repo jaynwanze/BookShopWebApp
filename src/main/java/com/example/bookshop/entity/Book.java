@@ -1,7 +1,11 @@
 package com.example.bookshop.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class Book {
 
@@ -15,84 +19,63 @@ public class Book {
     private double price;
     private String category;
     private String isbn;
+
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
-    public Book() {
+    public Book() { }
+
+    // Private constructor for the builder
+    private Book(Builder builder) {
+        this.title = builder.title;
+        this.author = builder.author;
+        this.publisher = builder.publisher;
+        this.price = builder.price;
+        this.category = builder.category;
+        this.isbn = builder.isbn;
+        this.image = builder.image;
     }
 
-    public Book(String title, String author, String publisher, double price, String category, String isbn,
-            String image) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.price = price;
-        this.category = category;
-        this.isbn = isbn;
-        this.image = image;
-    }
+    public static class Builder {
+        private String title;
+        private String author;
+        private String publisher;
+        private double price;
+        private String category;
+        private String isbn;
+        private String image;
 
-    public Long getId() {
-        return id;
-    }
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+        public Builder author(String author) {
+            this.author = author;
+            return this;
+        }
+        public Builder publisher(String publisher) {
+            this.publisher = publisher;
+            return this;
+        }
+        public Builder price(double price) {
+            this.price = price;
+            return this;
+        }
+        public Builder category(String category) {
+            this.category = category;
+            return this;
+        }
+        public Builder isbn(String isbn) {
+            this.isbn = isbn;
+            return this;
+        }
+        public Builder image(String image) {
+            this.image = image;
+            return this;
+        }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getimage() {
-        return image;
-    }
-
-    public void setimage(String image) {
-        this.image = image;
+        public Book build() {
+            return new Book(this);
+        }
     }
 }
