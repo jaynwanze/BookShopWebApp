@@ -12,26 +12,31 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
-    
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+
+    public List<Book> getAllBooks(String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+        return bookRepository.findAll(sort);
     }
-    
+
     public Book getBookById(Long id) {
         return bookRepository.findById(id).orElse(null);
     }
-    
+
     public Book saveBook(Book book) {
         return bookRepository.save(book);
     }
-    
+
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
-    
-    //search method with sorting (Strategy pattern)
+
+    // search method with sorting (Strategy pattern)
     public List<Book> searchBooksByTitle(String title, String sortField, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
         return bookRepository.findAllByTitleContainingIgnoreCase(title, sort);
     }
 }
