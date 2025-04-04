@@ -15,22 +15,22 @@ public class PageController {
 
     @GetMapping("/login/customer")
     public String loginAdministartorPage() {
-        return "customer-login";
+        return "/customer/login";
     }
 
     @GetMapping("/register/customer")
     public String registerCustomerPage() {
-        return "customer-register";
+        return "/customer/register";
     }
 
     @GetMapping("/login/administrator")
     public String loginAdministratorPage() {
-        return "admin-login";
+        return "/administrator/login";
     }
 
     @GetMapping("/register/administrator")
     public String registerAdministratorPage() {
-        return "admin-register";
+        return "/administrator/register";
     }
 
     @GetMapping("/logout")
@@ -46,7 +46,7 @@ public class PageController {
 
     @GetMapping("/administrator/dashboard")
     public String administratorDashboardPage() {
-        return "admin/dashboard";
+        return "administrator/dashboard";
     }
 
 }
