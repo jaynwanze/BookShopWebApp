@@ -38,9 +38,9 @@ public class MyUserDetailsService implements UserDetailsService {
         // 1) Decide the roles. For a Customer entity, ROLE_CUSTOMER; for an Admin, ROLE_ADMIN, etc.
         List<GrantedAuthority> authorities;
         if (found instanceof Customer) {
-            authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+            authorities = List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         } else {
-            authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
 
         // 2) Return a Spring Security user, using the found user’s email & password

@@ -14,6 +14,7 @@ import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.User;
 import com.example.bookshop.factory.AdministratorFactory;
 import com.example.bookshop.factory.CustomerFactory;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthService {
@@ -29,6 +30,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private HttpServletRequest request;
 
     // Register a new Customer
     public String registerCustomer(String email, String name, String rawPassword,
@@ -53,6 +57,7 @@ public class AuthService {
             Authentication authResult = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, rawPassword));
             SecurityContextHolder.getContext().setAuthentication(authResult);
+            request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Could not auto-login: " + ex.getMessage());
             return "redirect:/login";
@@ -71,12 +76,12 @@ public class AuthService {
             redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
             return "redirect:/login";
         }
-
         // Attempt authentication
         try {
             Authentication authResult = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, rawPassword));
             SecurityContextHolder.getContext().setAuthentication(authResult);
+            request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
             return "redirect:/login";
@@ -108,6 +113,7 @@ public class AuthService {
             Authentication authResult = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, rawPassword));
             SecurityContextHolder.getContext().setAuthentication(authResult);
+            request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Could not auto-login: " + ex.getMessage());
             return "redirect:/login";
@@ -132,6 +138,7 @@ public class AuthService {
             Authentication authResult = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, rawPassword));
             SecurityContextHolder.getContext().setAuthentication(authResult);
+            request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
             return "redirect:/login";
