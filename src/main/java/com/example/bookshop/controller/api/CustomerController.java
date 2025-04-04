@@ -1,4 +1,4 @@
-package com.example.bookshop.controller;
+package com.example.bookshop.controller.api;
 
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.service.CustomerService;

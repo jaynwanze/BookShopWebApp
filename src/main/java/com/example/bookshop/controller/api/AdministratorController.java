@@ -1,4 +1,4 @@
-package com.example.bookshop.controller;
+package com.example.bookshop.controller.api;
 
 
 import org.springframework.stereotype.Controller;

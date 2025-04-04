@@ -1,4 +1,4 @@
-package com.example.bookshop.controller;
+package com.example.bookshop.controller.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import com.example.bookshop.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
