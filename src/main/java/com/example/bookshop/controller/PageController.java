@@ -39,4 +39,14 @@ public class PageController {
         return "redirect:/login";
     }
 
+    @GetMapping("/customer/dashboard")
+    public String customerDashboardPage() {
+        return "customer/dashboard";
+    }
+
+    @GetMapping("/administrator/dashboard")
+    public String administratorDashboardPage() {
+        return "admin/dashboard";
+    }
+
 }
