@@ -13,5 +13,23 @@ public class CustomerPageController {
         return "customer/dashboard";
     }
 
+    @GetMapping("/shopping-cart")
+    public String shoppingCartPage() {
+        return "customer/cart";
+    }
 
+    @GetMapping("/profile")
+    public String customerProfilePage() {
+        return "customer/profile";
+    }
+
+    @GetMapping("/checkout")
+    public String checkoutPage() {
+        return "customer/checkout";
+    }
+
+    @GetMapping("/catalog")
+    public String catalogPage() {
+        return "customer/catalog";
+    }
 }
