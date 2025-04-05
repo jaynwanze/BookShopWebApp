@@ -34,7 +34,6 @@
         <tbody>
           <tr th:each="item : ${cartItems}">
             <td th:text="${item.book.title}">Book Title</td>
-            <td th:text="${item.book.description}">Description</td>
             <td>
               <input type="number" min="1" th:value="${item.quantity}" name="quantity" class="form-control">
             </td>
