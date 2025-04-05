@@ -1,4 +1,4 @@
-package com.example.bookshop.factory;
+package com.example.bookshop.factory.user;
 
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.User;

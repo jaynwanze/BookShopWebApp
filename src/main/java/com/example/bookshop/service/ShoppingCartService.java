@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.CartItem;
 import com.example.bookshop.entity.ShoppingCart;
+import com.example.bookshop.factory.item.CartItemFactory;
 
 @Service
 public class ShoppingCartService {
@@ -40,12 +41,13 @@ public class ShoppingCartService {
     }
 
     public List<CartItem> getCartItems(ShoppingCart cart) {
+        CartItemFactory cartItemFactory = new CartItemFactory();
         List<CartItem> cartItems = cart.getItems().entrySet().stream()
                 .map(entry -> {
                     Long bookId = entry.getKey();
                     int quantity = entry.getValue();
                     Book book = bookService.getBookById(bookId);
-                    return new CartItem(book, quantity);
+                    return (CartItem) cartItemFactory.createItem(book, quantity);
                 })
                 .toList();
         return cartItems;
@@ -53,8 +55,8 @@ public class ShoppingCartService {
 
     public double calculateCartTotal(List<CartItem> cartItems) {
         double total = cartItems.stream()
-        .mapToDouble(item -> item.getBook().getPrice() * item.getQuantity())
-        .sum();
-        return total;   
+                .mapToDouble(item -> item.getBook().getPrice() * item.getQuantity())
+                .sum();
+        return total;
     }
 }

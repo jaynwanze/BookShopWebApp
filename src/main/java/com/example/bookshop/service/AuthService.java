@@ -12,8 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.bookshop.entity.Administrator;
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.User;
-import com.example.bookshop.factory.AdministratorFactory;
-import com.example.bookshop.factory.CustomerFactory;
+import com.example.bookshop.factory.user.AdministratorFactory;
+import com.example.bookshop.factory.user.CustomerFactory;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
