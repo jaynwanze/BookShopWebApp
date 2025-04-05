@@ -7,27 +7,40 @@
 </head>
 
 <body>
-    <div class="container grid mt-5 text-center flex justify-center">
+    <div class="container mt-5 text-center">
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">Administrator Register</h5>
-                <form th:action="@{/auth/register/customer}" method="post">
-                    <label>Name:</label>
-                    <input class="mb-3" type="text" name="name" required />
-                    <br>
-                    <label>Email:</label>
-                    <input class="mb-3" type="email" name="email" required />
-                    <br>
-                    <label>Password:</label>
-                    <input class="mb-3" type="password" name="password" required />
-                    <br>
-                    <button class="btn btn-success mb-3" type="submit">Submit</button>
+                <form th:action="@{/auth/register/administrator}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Name:</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email:</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password:</label>
+                        <input type="password" name="password" class="form-control" placeholder="Enter your password"
+                            required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Job Title:</label>
+                        <input type="text" name="jobTitle" class="form-control" placeholder="Enter your job title"
+                            required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department:</label>
+                        <input type="text" name="department" class="form-control" placeholder="Enter your department"
+                            required />
+                    </div>
+                    <button type="submit" class="btn btn-success">Register</button>
                 </form>
-                <a href="/login/administrator" class="btn btn-primary mb-1">Go To Login Page</a>
-
-                <div class="mb-3 mt-3" `>
-                    <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage" />
+                <div class="mt-3">
+                    <a th:href="@{/login/administrator}" class="btn btn-primary">Go To Login Page</a>
                 </div>
+                <div class="alert alert-danger mt-3" th:if="${param.error}" th:text="${param.error}"></div>
             </div>
         </div>
     </div>

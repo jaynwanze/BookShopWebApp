@@ -1,4 +1,5 @@
 package com.example.bookshop.controller.api;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,35 +17,35 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register/customer")
-    public String registerCustomer(@RequestParam String email,
-                                   @RequestParam String name,
-                                   @RequestParam String password,
-                                   RedirectAttributes redirectAttributes) {
-        return authService.registerCustomer(email, name, password, redirectAttributes);
+    public String registerCustomer(@RequestParam String username,
+            @RequestParam String name,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+        return authService.registerCustomer(username, name, password, redirectAttributes);
     }
 
     @PostMapping("/login/customer")
-    public String loginCustomer(@RequestParam String email,
-                                @RequestParam String password,
-                                RedirectAttributes redirectAttributes) {
-        return authService.loginCustomer(email, password, redirectAttributes);
+    public String loginCustomer(@RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+        return authService.loginCustomer(username, password, redirectAttributes);
     }
 
     @PostMapping("/register/administrator")
-    public String registerAdministrator(@RequestParam String email,
-                                        @RequestParam String name,
-                                        @RequestParam String password,
-                                        @RequestParam String jobTitle,
-                                        @RequestParam String department,
-                                        RedirectAttributes redirectAttributes) {
-        return authService.registerAdministrator(email, name, password, jobTitle, department, redirectAttributes);
+    public String registerAdministrator(@RequestParam String username,
+            @RequestParam String name,
+            @RequestParam String password,
+            @RequestParam String jobTitle,
+            @RequestParam String department,
+            RedirectAttributes redirectAttributes) {
+        return authService.registerAdministrator(username, name, password, jobTitle, department, redirectAttributes);
     }
 
     @PostMapping("/login/administrator")
-    public String loginAdministrator(@RequestParam String email,
-                                     @RequestParam String password,
-                                     RedirectAttributes redirectAttributes) {
-        return authService.loginAdministrator(email, password, redirectAttributes);
+    public String loginAdministrator(@RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+        return authService.loginAdministrator(username, password, redirectAttributes);
     }
 
     @GetMapping("/logout")
