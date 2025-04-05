@@ -2,18 +2,17 @@ package com.example.bookshop.controller.api;
 
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.ShoppingCart;
+import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.ShoppingCartService;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/customers")
@@ -62,17 +61,33 @@ public class CustomerController {
     }
 
     // Add item to cart
-    @PostMapping("/cart/add/{customerId}/{bookId}")
-    public ResponseEntity<Map<String, Object>> addItemToCart(@PathVariable Long customerId, @PathVariable Long bookId) {
+    @PostMapping("/cart/add/{bookId}")
+    public String addItemToCart(@AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookId, RedirectAttributes redirectAttributes) {
         // Add quantity parameter to the method signature
         int quantity = 1; // Default quantity to add
-        ShoppingCart cart = shoppingCartService.getShoppingCart(customerId);
+        ShoppingCart cart = shoppingCartService.getShoppingCart(userDetails.getId());
         cart.addItem(bookId, quantity);
-        shoppingCartService.saveShoppingCart(customerId, cart);
+        shoppingCartService.saveShoppingCart(userDetails.getId(), cart);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Item added to cart successfully");
-        response.put("cart", cart);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        // Sucess message to be displayed after redirect
+        redirectAttributes.addFlashAttribute("success", "Item added to cart successfully");
+        return "redirect:/customer/catalog"; // Redirect to the cart page after adding item
     }
+
+    @PostMapping("/cart/remove/{bookId}")
+    public String removeItemFromCart(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookId,
+            RedirectAttributes redirectAttributes) {
+
+        ShoppingCart cart = shoppingCartService.getShoppingCart(userDetails.getId());
+        cart.removeItem(bookId);
+        shoppingCartService.saveShoppingCart(userDetails.getId(), cart);
+
+        // Sucess message to be displayed after redirect
+        redirectAttributes.addFlashAttribute("success", "Item removed from cart successfully");
+        return "redirect:/customer/shopping-cart"; // Redirect to the cart page after removing item
+    }
+
 }

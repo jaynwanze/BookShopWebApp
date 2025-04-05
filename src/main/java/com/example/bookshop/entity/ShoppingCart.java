@@ -35,4 +35,8 @@ public class ShoppingCart implements Serializable {
     public void addItem(Long bookId, int quantity) {
         items.merge(bookId, quantity, Integer::sum);
     }
+  
+    public void removeItem(Long bookId) {
+        items.remove(bookId);
+    }
 }
