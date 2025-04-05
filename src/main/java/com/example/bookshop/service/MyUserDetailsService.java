@@ -11,7 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.bookshop.entity.Customer;
+import com.example.bookshop.entity.*;
+import com.example.bookshop.security.CustomUserDetails;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
@@ -24,30 +25,26 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Suppose "username" is actually the email
-        com.example.bookshop.entity.User found = customerService.getCustomerByEmail(username);
-
-        if (found == null) {
-            // Maybe it’s an admin
-            found = administratorService.getAdministratorByEmail(username);
+        User found = customerService.getCustomerByEmail(username);
+        if (found != null && found instanceof Customer) {
+            Customer customer = (Customer) found;
+            return new CustomUserDetails(
+                customer.getId(),
+                customer.getEmail(),
+                customer.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_CUSTOMER"))
+            );
         }
-        if (found == null) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
+        found = administratorService.getAdministratorByEmail(username);
+        if (found != null && found instanceof Administrator) {
+            Administrator admin = (Administrator) found;
+            return new CustomUserDetails(
+                admin.getId(),
+                admin.getEmail(),
+                admin.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))
+            );
         }
-
-        // 1) Decide the roles. For a Customer entity, ROLE_CUSTOMER; for an Admin, ROLE_ADMIN, etc.
-        List<GrantedAuthority> authorities;
-        if (found instanceof Customer) {
-            authorities = List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-        } else {
-            authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
-
-        // 2) Return a Spring Security user, using the found user’s email & password
-        return new org.springframework.security.core.userdetails.User(
-            found.getEmail(),
-            found.getPassword(),
-            authorities
-        );
+        throw new UsernameNotFoundException("User not found with email: " + username);
     }
 }
