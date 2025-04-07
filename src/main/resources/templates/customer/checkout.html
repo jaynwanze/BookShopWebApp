@@ -16,7 +16,7 @@
 
     <!-- Only display the checkout form if there are cart items -->
     <div th:if="${!#lists.isEmpty(cartItems)}">
-      <form th:action="@{/customers/update-checkout-info}" method="post">
+      <form th:action="@{/customers/checkout/update-details}" method="post">
         <div class="card mb-3">
           <div class="card-header">
             Shipping Address &amp; Payment Method
@@ -52,7 +52,7 @@
                     th:value="${customer.shippingAddress?.country}" placeholder="Enter your country">
                 </div>
               </div>
-              <!-- Payment Method Column -->
+              <!-- Payment & Discount Column -->
               <div class="col-md-6">
                 <h5>Payment Method</h5>
                 <div class="mb-3">
@@ -74,6 +74,12 @@
                   <label for="cardholderName" class="form-label">Cardholder Name:</label>
                   <input id="cardholderName" type="text" class="form-control" name="paymentMethod.cardholderName"
                     th:value="${customer.paymentMethod?.cardholderName}" placeholder="Enter cardholder name">
+                </div>
+                <!-- Discount Code Field -->
+                <div class="mb-3">
+                  <label for="discountCode" class="form-label">Discount Code:</label>
+                  <input id="discountCode" type="text" class="form-control" name="discountCode"
+                    th:value="${discountCode}" placeholder="Enter discount code (e.g., SAVE10)">
                 </div>
               </div>
             </div>
@@ -107,7 +113,11 @@
             </tbody>
           </table>
           <div class="d-flex justify-content-end">
-            <h4>Total: <span th:text="${total}">0.00</span></h4>
+            <h4>
+              Total: <span th:text="${#numbers.formatDecimal(total, 2, 2)}">0.00</span>
+              <span th:if="${discount > 0}" class="text-success"> (Discount Applied: <span
+                  th:text="${discount * 100}">0</span>% Off)</span>
+            </h4>
           </div>
         </div>
       </div>
