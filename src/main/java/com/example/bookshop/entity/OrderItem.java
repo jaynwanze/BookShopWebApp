@@ -39,4 +39,20 @@ public class OrderItem extends Item implements Serializable {
         this.price = price;
     }
 
+    public double getPrice() {
+        return price;
+    }
+    public Book getBook() {
+        return book;
+    }
+    public void setBook(Book book) {
+        this.book = book;
+    }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

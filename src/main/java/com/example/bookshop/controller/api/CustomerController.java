@@ -89,7 +89,7 @@ public class CustomerController {
         return "redirect:/customer/shopping-cart"; // Redirect to the cart page after removing item
     }
 
-    @PostMapping("/checkout/updateInfo")
+    @PostMapping("/update-checkout-info")
     public String updateCheckoutInfo(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @ModelAttribute("customer") Customer customerFromForm,

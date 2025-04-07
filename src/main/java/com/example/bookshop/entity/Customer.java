@@ -1,9 +1,9 @@
 package com.example.bookshop.entity;
 
 import jakarta.persistence.*;
+
 @Entity
 public class Customer extends User {
-
 
     @Embedded
     private ShippingAddress shippingAddress;
@@ -14,7 +14,8 @@ public class Customer extends User {
         super();
     }
 
-    public Customer(String name, String email, String password, ShippingAddress shippingAddress, PaymentMethod paymentMethod) {
+    public Customer(String name, String email, String password, ShippingAddress shippingAddress,
+            PaymentMethod paymentMethod) {
         super(name, email, password);
         this.shippingAddress = shippingAddress;
         this.paymentMethod = paymentMethod;

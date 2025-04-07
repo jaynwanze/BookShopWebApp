@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>Checkout</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
 </head>
+
 <body>
   <div class="container mt-5">
     <h2>Checkout</h2>
@@ -14,7 +16,7 @@
 
     <!-- Only display the checkout form if there are cart items -->
     <div th:if="${!#lists.isEmpty(cartItems)}">
-      <form th:action="@{/customers/checkout/updateInfo}" method="post">
+      <form th:action="@{/customers/update-checkout-info}" method="post">
         <div class="card mb-3">
           <div class="card-header">
             Shipping Address &amp; Payment Method
@@ -27,27 +29,27 @@
                 <div class="mb-3">
                   <label for="street" class="form-label">Street:</label>
                   <input id="street" type="text" class="form-control" name="shippingAddress.street"
-                         th:value="${customer.shippingAddress?.street}" placeholder="Enter street address">
+                    th:value="${customer.shippingAddress?.street}" placeholder="Enter street address">
                 </div>
                 <div class="mb-3">
                   <label for="city" class="form-label">City:</label>
                   <input id="city" type="text" class="form-control" name="shippingAddress.city"
-                         th:value="${customer.shippingAddress?.city}" placeholder="Enter your city">
+                    th:value="${customer.shippingAddress?.city}" placeholder="Enter your city">
                 </div>
                 <div class="mb-3">
                   <label for="state" class="form-label">State/Province:</label>
                   <input id="state" type="text" class="form-control" name="shippingAddress.state"
-                         th:value="${customer.shippingAddress?.state}" placeholder="Enter state or province">
+                    th:value="${customer.shippingAddress?.state}" placeholder="Enter state or province">
                 </div>
                 <div class="mb-3">
                   <label for="postalCode" class="form-label">Postal Code:</label>
                   <input id="postalCode" type="text" class="form-control" name="shippingAddress.postalCode"
-                         th:value="${customer.shippingAddress?.postalCode}" placeholder="Enter postal code">
+                    th:value="${customer.shippingAddress?.postalCode}" placeholder="Enter postal code">
                 </div>
                 <div class="mb-3">
                   <label for="country" class="form-label">Country:</label>
                   <input id="country" type="text" class="form-control" name="shippingAddress.country"
-                         th:value="${customer.shippingAddress?.country}" placeholder="Enter your country">
+                    th:value="${customer.shippingAddress?.country}" placeholder="Enter your country">
                 </div>
               </div>
               <!-- Payment Method Column -->
@@ -56,22 +58,22 @@
                 <div class="mb-3">
                   <label for="paymentType" class="form-label">Payment Type:</label>
                   <input id="paymentType" type="text" class="form-control" name="paymentMethod.type"
-                         th:value="${customer.paymentMethod?.type}" placeholder="e.g., Credit Card">
+                    th:value="${customer.paymentMethod?.type}" placeholder="e.g., Credit Card">
                 </div>
                 <div class="mb-3">
                   <label for="maskedNumber" class="form-label">Card Number:</label>
                   <input id="maskedNumber" type="text" class="form-control" name="paymentMethod.maskedNumber"
-                         th:value="${customer.paymentMethod?.maskedNumber}" placeholder="Visa **** 1234">
+                    th:value="${customer.paymentMethod?.maskedNumber}" placeholder="Visa **** 1234">
                 </div>
                 <div class="mb-3">
                   <label for="expiryDate" class="form-label">Expiry Date:</label>
                   <input id="expiryDate" type="text" class="form-control" name="paymentMethod.expiryDate"
-                         th:value="${customer.paymentMethod?.expiryDate}" placeholder="MM/YYYY">
+                    th:value="${customer.paymentMethod?.expiryDate}" placeholder="MM/YYYY">
                 </div>
                 <div class="mb-3">
                   <label for="cardholderName" class="form-label">Cardholder Name:</label>
                   <input id="cardholderName" type="text" class="form-control" name="paymentMethod.cardholderName"
-                         th:value="${customer.paymentMethod?.cardholderName}" placeholder="Enter cardholder name">
+                    th:value="${customer.paymentMethod?.cardholderName}" placeholder="Enter cardholder name">
                 </div>
               </div>
             </div>
@@ -111,21 +113,22 @@
       </div>
 
       <!-- Place Order Form -->
-      <form th:action="@{/customer/checkout/placeOrder}" method="post">
+      <form th:action="@{/orders/place-order}" method="post">
         <button type="submit" class="btn btn-primary">Place Order</button>
       </form>
     </div>
-    
+
     <!-- If cart is empty, prompt to continue shopping -->
     <div th:if="${#lists.isEmpty(cartItems)}">
       <div class="alert alert-info">Your cart is empty.</div>
       <p>For more books, please visit our <a th:href="@{/customer/catalog}">catalog</a>.</p>
       <a th:href="@{/customer/catalog}" class="btn btn-primary">Continue Shopping</a>
     </div>
-    
+
     <div class="mt-3">
       <a th:href="@{/customer/shopping-cart}" class="btn btn-secondary">Back to Cart</a>
     </div>
   </div>
 </body>
+
 </html>

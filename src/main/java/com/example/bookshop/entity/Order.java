@@ -1,34 +1,73 @@
 package com.example.bookshop.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Order implements Serializable {
 
     private Long id;
-    private Long customerId; // Alternatively, you could reference a Customer object
+    private Long customerId;
     private List<OrderItem> items;
     private double total;
     private Date orderDate;
-    private String shippingAddress;
-    private String paymentMethod;
+    private ShippingAddress shippingAddress;
+    private PaymentMethod paymentMethod;
 
-    public Order() {
-        // Default constructor
+    // Private constructor
+    private Order(Builder builder) {
+        this.customerId = builder.customerId;
+        this.items = builder.items;
+        this.total = builder.total;
+        this.orderDate = builder.orderDate;
+        this.shippingAddress = builder.shippingAddress;
+        this.paymentMethod = builder.paymentMethod;
     }
 
-    // Constructor with all fields except ID (if auto-generated)
-    public Order(Long customerId, List<OrderItem> items, double total, Date orderDate, String shippingAddress, String paymentMethod) {
-        this.customerId = customerId;
-        this.items = items;
-        this.total = total;
-        this.orderDate = orderDate;
-        this.shippingAddress = shippingAddress;
-        this.paymentMethod = paymentMethod;
-    }
+    // Builder class
+    public static class Builder {
+        private Long customerId;
+        private List<OrderItem> items = new ArrayList<>();
+        private double total;
+        private Date orderDate;
+        private ShippingAddress shippingAddress;
+        private PaymentMethod paymentMethod;
 
-    // Getters and setters
+        public Builder customerId(Long customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+
+        public Builder items(List<OrderItem> items) {
+            this.items = items;
+            return this;
+        }
+
+        public Builder total(double total) {
+            this.total = total;
+            return this;
+        }
+
+        public Builder orderDate(Date orderDate) {
+            this.orderDate = orderDate;
+            return this;
+        }
+
+        public Builder shippingAddress(ShippingAddress shippingAddress) {
+            this.shippingAddress = shippingAddress;
+            return this;
+        }
+
+        public Builder paymentMethod(PaymentMethod paymentMethod) {
+            this.paymentMethod = paymentMethod;
+            return this;
+        }
+
+        public Order build() {
+            return new Order(this);
+        }
+    }
 
     public Long getId() {
         return id;
@@ -70,20 +109,20 @@ public class Order implements Serializable {
         this.orderDate = orderDate;
     }
 
-    public String getShippingAddress() {
+    public ShippingAddress getShippingAddress() {
         return shippingAddress;
     }
 
-    public void setShippingAddress(String shippingAddress) {
+    public void setShippingAddress(ShippingAddress shippingAddress) {
         this.shippingAddress = shippingAddress;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
-    
+
 }

@@ -1,7 +1,6 @@
 package com.example.bookshop.factory.item;
 
 import com.example.bookshop.entity.Book;
-import com.example.bookshop.entity.Item;
 import com.example.bookshop.entity.OrderItem;
 
 public class OrderItemFactory implements ItemFactory {
@@ -14,7 +13,7 @@ public class OrderItemFactory implements ItemFactory {
     }
 
     @Override
-    public Item createItem(Book book, int quantity) {
+    public OrderItem createItem(Book book, int quantity) {
         return new OrderItem(book, quantity, price, orderId);
     }
 
