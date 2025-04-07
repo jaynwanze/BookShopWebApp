@@ -1,24 +1,38 @@
 package com.example.bookshop.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 @Entity
 public class Customer extends User {
 
-    private String shippingAddress;
-    private String paymentMethod;
+
+    @Embedded
+    private ShippingAddress shippingAddress;
+    @Embedded
+    private PaymentMethod paymentMethod;
 
     public Customer() {
         super();
     }
 
-    public Customer(String name, String email, String password, String shippingAddress, String paymentMethod) {
+    public Customer(String name, String email, String password, ShippingAddress shippingAddress, PaymentMethod paymentMethod) {
         super(name, email, password);
         this.shippingAddress = shippingAddress;
+        this.paymentMethod = paymentMethod;
+    }
+
+    public ShippingAddress getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(ShippingAddress shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 }

@@ -6,7 +6,6 @@ import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.ShoppingCartService;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -88,6 +87,33 @@ public class CustomerController {
         // Sucess message to be displayed after redirect
         redirectAttributes.addFlashAttribute("success", "Item removed from cart successfully");
         return "redirect:/customer/shopping-cart"; // Redirect to the cart page after removing item
+    }
+
+    @PostMapping("/checkout/updateInfo")
+    public String updateCheckoutInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @ModelAttribute("customer") Customer customerFromForm,
+            RedirectAttributes redirectAttributes) {
+
+        // Get the existing customer record
+        Customer customer = customerService.getCustomerById(userDetails.getId());
+        if (customer == null) {
+            redirectAttributes.addFlashAttribute("error", "Customer not found.");
+            return "redirect:/customer/checkout";
+        }
+
+        // Update shipping address if provided
+        if (customerFromForm.getShippingAddress() != null) {
+            customer.setShippingAddress(customerFromForm.getShippingAddress());
+        }
+        // Update payment method if provided
+        if (customerFromForm.getPaymentMethod() != null) {
+            customer.setPaymentMethod(customerFromForm.getPaymentMethod());
+        }
+
+        customerService.updateCustomer(customer);
+        redirectAttributes.addFlashAttribute("message", "Your information has been updated successfully.");
+        return "redirect:/customer/checkout-page";
     }
 
 }
