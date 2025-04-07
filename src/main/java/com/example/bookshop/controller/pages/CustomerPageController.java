@@ -67,13 +67,25 @@ public class CustomerPageController {
 
     @GetMapping("/checkout-page")
     public String checkoutPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        Customer customer = customerService.getCustomerById(userDetails.getId());
         ShoppingCart cart = shoppingCartService.getShoppingCart(userDetails.getId());
         List<CartItem> cartItems = shoppingCartService.getCartItems(cart);
-        double total = shoppingCartService.calculateCartTotal(cartItems);
-        Customer customer = customerService.getCustomerById(userDetails.getId());
+        double subtotal = shoppingCartService.calculateCartTotal(cartItems);
+
+        // Retrieve any applied discount from the model
+        Double discount = (Double) model.asMap().get("discount");
+        if (discount == null) {
+            discount = 0.0;
+        }
+        double total = subtotal * (1 - discount);
+
         model.addAttribute("customer", customer);
         model.addAttribute("cartItems", cartItems);
+        model.addAttribute("subtotal", subtotal);
         model.addAttribute("total", total);
+        model.addAttribute("discountCode", model.asMap().get("discountCode"));
+        model.addAttribute("discount", discount);
         return "customer/checkout";
     }
+
 }

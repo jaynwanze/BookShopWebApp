@@ -9,12 +9,6 @@ import com.example.bookshop.entity.OrderItem;
 import com.example.bookshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.bookshop.service.DiscountService;
-import com.example.bookshop.service.ShoppingCartService;
-import com.example.bookshop.service.CustomerService;
-import com.example.bookshop.service.PaymentService;
-import com.example.bookshop.service.StockService;
-import com.example.bookshop.entity.Book;
 
 import java.util.List;
 

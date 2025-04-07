@@ -4,6 +4,7 @@ import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.ShoppingCart;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.CustomerService;
+import com.example.bookshop.service.DiscountService;
 import com.example.bookshop.service.ShoppingCartService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class CustomerController {
 
     @Autowired
     private ShoppingCartService shoppingCartService;
+
+    @Autowired
+    private DiscountService discountService;
 
     // Display a list of customers
     @GetMapping
@@ -89,30 +93,33 @@ public class CustomerController {
         return "redirect:/customer/shopping-cart"; // Redirect to the cart page after removing item
     }
 
-    @PostMapping("/update-checkout-info")
+    @PostMapping("/checkout/update-details")
     public String updateCheckoutInfo(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @ModelAttribute("customer") Customer customerFromForm,
+            @RequestParam(required = false) String discountCode,
             RedirectAttributes redirectAttributes) {
 
-        // Get the existing customer record
+        // Update shipping and payment info
         Customer customer = customerService.getCustomerById(userDetails.getId());
-        if (customer == null) {
-            redirectAttributes.addFlashAttribute("error", "Customer not found.");
-            return "redirect:/customer/checkout";
-        }
-
-        // Update shipping address if provided
         if (customerFromForm.getShippingAddress() != null) {
             customer.setShippingAddress(customerFromForm.getShippingAddress());
         }
-        // Update payment method if provided
         if (customerFromForm.getPaymentMethod() != null) {
             customer.setPaymentMethod(customerFromForm.getPaymentMethod());
         }
-
         customerService.updateCustomer(customer);
-        redirectAttributes.addFlashAttribute("message", "Your information has been updated successfully.");
+
+        // Validate discount code
+        double discount = discountService.validateDiscountCode(discountCode);
+        redirectAttributes.addFlashAttribute("discount", discount);
+        redirectAttributes.addFlashAttribute("discountCode", discountCode);
+        if (discount > 0) {
+            redirectAttributes.addFlashAttribute("message", "Discount code applied! (" + (discount * 100) + "% off)");
+        } else if (discountCode != null && !discountCode.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Invalid discount code.");
+        }
+
         return "redirect:/customer/checkout-page";
     }
 

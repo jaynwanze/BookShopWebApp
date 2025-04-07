@@ -3,6 +3,7 @@ package com.example.bookshop.controller.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,8 @@ import com.example.bookshop.entity.Order;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.OrderService;
 
+import ch.qos.logback.core.model.Model;
+
 @Controller
 @RequestMapping("/orders")
 public class OrderController {
@@ -19,12 +22,12 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/checkout/place-order")
+    @PostMapping("/place-order")
     public String placeOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam("discountCode") String discountCode,
+            @ModelAttribute String discount,
             RedirectAttributes redirectAttributes) {
         try {
-            Order order = orderService.placeOrder(userDetails.getId(), discountCode);
+            Order order = orderService.placeOrder(userDetails.getId(), discount);
             redirectAttributes.addFlashAttribute("message",
                     "Order placed successfully! Your order ID is " + order.getId());
             return "redirect:/customer/dashboard";

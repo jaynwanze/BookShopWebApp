@@ -1,15 +1,19 @@
 package com.example.bookshop.entity;
 
-import java.io.Serializable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
-import lombok.Getter;
-import lombok.Setter;
+@Entity
+public class OrderItem extends Item {
 
-@Getter
-@Setter
-public class OrderItem extends Item implements Serializable {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+    @OneToOne
+    // add cascade type
     private Book book;
     private int quantity;
     private double price;
@@ -42,12 +46,15 @@ public class OrderItem extends Item implements Serializable {
     public double getPrice() {
         return price;
     }
+
     public Book getBook() {
         return book;
     }
+
     public void setBook(Book book) {
         this.book = book;
     }
+
     public int getQuantity() {
         return quantity;
     }
