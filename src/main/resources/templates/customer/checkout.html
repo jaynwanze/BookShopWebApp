@@ -11,8 +11,8 @@
     <h2>Checkout</h2>
 
     <!-- Flash Messages -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}" id="alert-success"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="alert-error"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}" id="successMessage"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage"></div>
 
     <!-- Only display the checkout form if there are cart items -->
     <div th:if="${!#lists.isEmpty(cartItems)}">
@@ -143,19 +143,17 @@
 </body>
 
 </html>
-
 <script>
-  setTimeout(function () {
-    const alert = document.getElementById('success-alert');
-    if (alert) {
-      alert.style.display = 'none';
-    }
-  }, 5000);
-
-  setTimeout(function () {
-    const alert = document.getElementById('error-alert');
-    if (alert) {
-      alert.style.display = 'none';
-    }
-  }, 5000);
+  window.onload = function () {
+      setTimeout(function () {
+          const successMessage = document.getElementById('successMessage');
+          const errorMessage = document.getElementById('errorMessage');
+          if (successMessage) {
+              successMessage.style.display = 'none';
+          }
+          if (errorMessage) {
+              errorMessage.style.display = 'none';
+          }
+      }, 3000);
+  };
 </script>

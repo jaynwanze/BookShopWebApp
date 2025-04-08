@@ -79,7 +79,7 @@
                         <div th:if="${book.stockLevel == 0}" class="alert alert-danger" role="alert">Out of Stock</div>
                         <div th:if="${book.stockLevel > 0}">
                             <!-- View Book Details -->
-                            <a th:href="@{/book/{id}(id=${book.id})}" class="btn btn-link">View</a>
+                            <a th:href="@{/customer/book/{id}(id=${book.id})}" class="btn btn-link">View</a>
                             <!-- Add to Cart Form -->
                             <form th:action="@{/customers/cart/add/{id}(id=${book.id})}" method="post"
                                 style="display:inline;">
@@ -98,12 +98,29 @@
     </div>
 
     <div class="mt-3">
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}" id="successMessage"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage"></div>
     </div>
 
     <!-- Pagination -->
-
     </div>
 </body>
 
 </html>
+
+
+<script>
+    setTimeout(function () {
+        const alert = document.getElementById('success-alert');
+        if (alert) {
+            alert.style.display = 'none';
+        }
+    }, 5000);
+
+    setTimeout(function () {
+        const alert = document.getElementById('error-alert');
+        if (alert) {
+            alert.style.display = 'none';
+        }
+    }, 5000);
+</script>
