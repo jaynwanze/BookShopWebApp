@@ -3,7 +3,6 @@ package com.example.bookshop.controller.api;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ public class BookController {
         if (title != null && !title.isEmpty()) {
             books = bookService.searchBooksByTitle(title, sortField, sortDir);
         } else {
-            books = bookService.getAllBooks(sortField, sortDir); 
+            books = bookService.getAllBooks(sortField, sortDir);
         }
         model.addAttribute("books", books);
         model.addAttribute("sortField", sortField);
@@ -38,36 +37,6 @@ public class BookController {
     public String showBookDetails(@PathVariable Long id, Model model) {
         Book book = bookService.getBookById(id);
         model.addAttribute("book", book);
-     
         return "book-details";
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/new")
-    public String showNewBookForm(Model model) {
-        model.addAttribute("book", new Book());
-        return "book-form";
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public String saveBook(@ModelAttribute("book") Book book) {
-        bookService.saveBook(book);
-        return "redirect:/books";
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/edit/{id}")
-    public String showEditBookForm(@PathVariable Long id, Model model) {
-        Book book = bookService.getBookById(id);
-        model.addAttribute("book", book);
-        return "book-form";
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/delete/{id}")
-    public String deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
-        return "redirect:/books";
     }
 }
