@@ -1,29 +1,30 @@
 package com.example.bookshop.entity;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class Review implements Serializable {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    // Relationships
+
     @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
-    
+
     @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
-    
-    private int rating; // e.g., scale 1-5
+
+    private int rating;
+
     @Column(length = 1000)
     private String comment;
+
     private Date reviewDate;
 
-    // Private constructor used by the builder
     private Review(Builder builder) {
         this.book = builder.book;
         this.customer = builder.customer;
@@ -31,11 +32,10 @@ public class Review implements Serializable {
         this.comment = builder.comment;
         this.reviewDate = builder.reviewDate != null ? builder.reviewDate : new Date();
     }
-    
-    // Default constructor for JPA
-    public Review() {}
 
-    // Getters (and setters if needed)
+    // Default constructor for JPA
+    public Review() {
+    }
 
     public static class Builder {
         private Book book;
@@ -74,6 +74,7 @@ public class Review implements Serializable {
         }
     }
 
+    // Getters and setters...
     public Long getId() {
         return id;
     }
@@ -121,6 +122,4 @@ public class Review implements Serializable {
     public void setReviewDate(Date reviewDate) {
         this.reviewDate = reviewDate;
     }
-
-    
 }

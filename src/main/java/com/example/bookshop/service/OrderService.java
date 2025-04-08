@@ -44,28 +44,37 @@ public class OrderService {
             throw new IllegalArgumentException("Shopping cart is empty or not found for customer ID: " + customerId);
         }
 
-        // Get the cart details and it and convert them to OrderItems
+        // Get the cart details
         List<CartItem> cartItems = shoppingCartService.getCartItems(cart);
-        List<OrderItem> orderItems = cartItems.stream()
-                .map(cartItem -> (OrderItem) new OrderItemFactory(customerId, cartItem.getBook().getPrice())
-                        .createItem(cartItem.getBook(), cartItem.getQuantity()))
-                .toList();
+        // Calculate the total price of the cart
         Double total = shoppingCartService.calculateCartTotal(cartItems);
+
+        // Create the order object
+        Order order = new Order.Builder().customerId(customerId)
+                .total(total)
+                .shippingAddress(customer.getShippingAddress())
+                .paymentMethod(customer.getPaymentMethod())
+                .orderDate(new java.sql.Date(System.currentTimeMillis()))
+                .build();
+
+        // Convert cart items to order items
+        List<OrderItem> orderItems = cartItems.stream()
+                .map(cartItem -> {
+                    OrderItem orderItem = (OrderItem) new OrderItemFactory(order, cartItem.getBook().getPrice())
+                            .createItem(cartItem.getBook(), cartItem.getQuantity());
+                    // Set the order in the order item:
+                    orderItem.setOrder(order);
+                    return orderItem;
+               })
+                .toList();
+        // Set the order items in the order
+        order.setItems(orderItems);
 
         // Apply discount if applicable
         double discount = discountService.validateDiscountCode(discountCode);
         if (discount == 0.0) {
             total = total * (1 - discount);
         }
-
-        // Create the order object
-        Order order = new Order.Builder().customerId(customerId)
-                .items(orderItems)
-                .total(total)
-                .shippingAddress(customer.getShippingAddress())
-                .paymentMethod(customer.getPaymentMethod())
-                .orderDate(new java.sql.Date(System.currentTimeMillis()))
-                .build();
 
         // Process payment
         boolean paymentSuccess = paymentService.processPayment(order);

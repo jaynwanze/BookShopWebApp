@@ -6,15 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.entity.Order;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.OrderService;
-
-import ch.qos.logback.core.model.Model;
-
 @Controller
 @RequestMapping("/orders")
 public class OrderController {
@@ -28,7 +24,7 @@ public class OrderController {
             RedirectAttributes redirectAttributes) {
         try {
             Order order = orderService.placeOrder(userDetails.getId(), discount);
-            redirectAttributes.addFlashAttribute("message",
+            redirectAttributes.addFlashAttribute("success",
                     "Order placed successfully! Your order ID is " + order.getId());
             return "redirect:/customer/dashboard";
         } catch (Exception e) {

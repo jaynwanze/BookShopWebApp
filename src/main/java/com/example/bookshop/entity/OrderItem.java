@@ -1,19 +1,26 @@
 package com.example.bookshop.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "order_items")
 public class OrderItem extends Item {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
-    @OneToOne
-    // add cascade type
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
     private Book book;
     private int quantity;
     private double price;
@@ -22,21 +29,21 @@ public class OrderItem extends Item {
         super();
     }
 
-    public OrderItem(Book book, int quantity, double price, Long orderId) {
+    public OrderItem(Book book, int quantity, double price, Order order) {
         super(book, quantity);
         this.book = book;
         this.quantity = quantity;
         this.price = price;
-        this.orderId = orderId;
+        this.order = order;
     }
 
-    // Getter and Setter methods for orderId price
-    public Long getOrderId() {
-        return orderId;
+    // Getter and Setter methods
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public void setPrice(double price) {
