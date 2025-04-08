@@ -1,10 +1,6 @@
 package com.example.bookshop.entity;
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public abstract class Item {
 
     private Book book;

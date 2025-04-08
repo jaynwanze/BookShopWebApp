@@ -9,19 +9,18 @@ import jakarta.persistence.MappedSuperclass;
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
+    protected String name;
+    protected String email;
+    protected String password;
 
-    private String name;
-    private String email;
-    private String password;
+    protected User() {
+    }
 
-    public User(String name, String email, String password) {
+    protected User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    public User() {
     }
 
     public Long getId() {

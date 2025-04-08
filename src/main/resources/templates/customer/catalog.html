@@ -64,6 +64,7 @@
                     <th>Author</th>
                     <th>Publisher</th>
                     <th>Price</th>
+                    <th>Stock</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -73,29 +74,34 @@
                     <td th:text="${book.author}">Author</td>
                     <td th:text="${book.publisher}">Publisher</td>
                     <td th:text="${book.price}">0.00</td>
+                    <td th:text="${book.stockLevel}">0</td>
                     <td>
-                        <!-- View Book Details -->
-                        <a th:href="@{/book/{id}(id=${book.id})}" class="btn btn-link">View</a>
-                        <!-- Add to Cart Form -->
-                        <form th:action="@{/customers/cart/add/{id}(id=${book.id})}" method="post"
-                            style="display:inline;">
-                            <button type="submit" class="btn btn-sm btn-success">Add to Cart</button>
-                        </form>
+                        <div th:if="${book.stockLevel == 0}" class="alert alert-danger" role="alert">Out of Stock</div>
+                        <div th:if="${book.stockLevel > 0}">
+                            <!-- View Book Details -->
+                            <a th:href="@{/book/{id}(id=${book.id})}" class="btn btn-link">View</a>
+                            <!-- Add to Cart Form -->
+                            <form th:action="@{/customers/cart/add/{id}(id=${book.id})}" method="post"
+                                style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-success">Add to Cart</button>
+                            </form>
+                        </div>
                     </td>
-                </tr>
-            </tbody>
-        </table>
+    </div>
+    </tr>
+    </tbody>
+    </table>
 
-        <!-- Return / Dashboard Link -->
-        <div>
-            <a th:href="@{/customer/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
-        </div>
+    <!-- Return / Dashboard Link -->
+    <div>
+        <a th:href="@{/customer/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 
-        <div class="mt-3">
-            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        </div>
+    <div class="mt-3">
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    </div>
 
-        <!-- Pagination -->
+    <!-- Pagination -->
 
     </div>
 </body>
