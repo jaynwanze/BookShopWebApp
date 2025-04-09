@@ -1,6 +1,7 @@
 package com.example.bookshop.service;
 
 import com.example.bookshop.entity.Book;
+import com.example.bookshop.factory.product.ProductFactory;
 import com.example.bookshop.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -51,5 +52,12 @@ public class BookService {
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
         return bookRepository.findAllByTitleContainingIgnoreCase(title, sort);
+    }
+
+    public Book createBook(String title, String author, String category, String publisher,
+            String isbn, int stockLevel, double price) {
+        ProductFactory productFactory = new ProductFactory();
+        Book book = (Book) productFactory.createProduct("book", title, price, stockLevel, author, category, publisher, null, isbn);
+        return bookRepository.save(book);
     }
 }

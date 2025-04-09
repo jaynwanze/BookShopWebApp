@@ -9,51 +9,41 @@
 <body>
     <div class="container mt-5">
         <h2>Add Book</h2>
-        <form th:action="@{/administrator/books/new}" th:object="${book}" method="post">
-            <input type="hidden" th:field="*{id}" />
+        <form th:action="@{/administrator/books}" method="post">
             <div class="mb-3">
                 <label for="title" class="form-label">Title:</label>
-                <input id="title" type="text" class="form-control" th:field="*{title}" />
+                <input id="title" name="title" type="text" class="form-control" required />
             </div>
             <div class="mb-3">
                 <label for="author" class="form-label">Author:</label>
-                <input id="author" type="text" class="form-control" th:field="*{author}" />
+                <input id="author" name="author" type="text" class="form-control" required />
             </div>
             <div class="mb-3">
-                <label for="stock" class="form-label">Stock Level:</label>
-                <input id="stock" type="number" class="form-control" th:field="*{stockLevel}" />
+                <label for="stockLevel" class="form-label">Stock Level:</label>
+                <input id="stockLevel" name="stockLevel" type="number" class="form-control" min="0" />
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price:</label>
-                <input id="price" type="number" step="0.01" class="form-control" th:field="*{price}" />
+                <input id="price" name="price" type="number" step="0.01" class="form-control" min="0" />
             </div>
-            <!-- etc. for publisher, category, etc. -->
-            <div class="mb-3">
-                <label for="description" class="form-label">Description:</label>
-                <textarea id="description" class="form-control" th:field="*{description}"></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="imageUrl" class="form-label">Image URL:</label>
-                <input id="imageUrl" type="text" class="form-control" th:field="*{imageUrl}" />
-            </div>
-
             <div class="mb-3">
                 <label for="category" class="form-label">Category:</label>
-                <input id="category" type="text" class="form-control" th:field="*{category}" />
+                <input id="category" name="category" type="text" class="form-control" />
             </div>
             <div class="mb-3">
                 <label for="publisher" class="form-label">Publisher:</label>
-                <input id="publisher" type="text" class="form-control" th:field="*{publisher}" />
+                <input id="publisher" name="publisher" type="text" class="form-control" />
             </div>
-
             <div class="mb-3">
                 <label for="isbn" class="form-label">ISBN:</label>
-                <input id="isbn" type="text" class="form-control" th:field="*{isbn}" />
+                <input id="isbn" name="isbn" type="text" class="form-control" />
             </div>
-
+            <div class="mb-3">
+                <label for="image" class="form-label">Image:</label>
+                <input id="image" name="image" type="file" class="form-control" accept="image/*" />
+            </div>
             <button type="submit" class="btn btn-primary">Add New Book</button>
-            <a th:href="@{/administrator/books}" class="btn btn-secondary">Cancel</a>
+            <a th:href="@{/administrator/manage-books}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 </body>

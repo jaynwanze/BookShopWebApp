@@ -17,15 +17,22 @@ public class AdministratorController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("/books/new")
-    public String showNewBookForm(@AuthenticationPrincipal CustomUserDetails userDetails, String title,
-            String author, String category, String description, String imageUrl, double price, Model model) {
-
+    @PostMapping("/books")
+    public String createBook(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String title,
+            @RequestParam String author,
+            @RequestParam(defaultValue = "0") int stockLevel,
+            @RequestParam(defaultValue = "0.0") double price,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String publisher,
+            @RequestParam(required = false) String isbn,
+            Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
-        // bookService.createBook(title, author, category, description, imageUrl,
-        // price);
+        bookService.createBook(title, author, category, publisher, isbn, stockLevel,
+                price);
         model.addAttribute("success", "Book created successfully!");
         return "redirect:/administrator/manage-books";
     }

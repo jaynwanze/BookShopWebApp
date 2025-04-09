@@ -39,6 +39,11 @@
                 <label for="isbn" class="form-label">ISBN:</label>
                 <input id="isbn" type="text" class="form-control" th:field="*{isbn}" />
             </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Image:</label>
+                <input id="image" type="file" class="form-control" th:field="*{image}" accept="image/*" />
+            </div>
             <button type="submit" class="btn btn-primary">Save Book</button>
             <a th:href="@{/administrator/manage-books}" class="btn btn-secondary">Cancel</a>
         </form>
