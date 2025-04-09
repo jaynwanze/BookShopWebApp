@@ -1,9 +1,11 @@
 package com.example.bookshop.controller.pages;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +30,12 @@ public class AdministratorPageController {
     }
 
     @GetMapping("/manage-books")
-    public String manageBooksPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String manageBooksPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
+        List<Book> books = bookService.getAllBooks("title", "asc");
+        model.addAttribute("books", books);
         return "administrator/books";
     }
 
@@ -51,12 +55,14 @@ public class AdministratorPageController {
         return "administrator/book-form-add";
     }
 
-    @GetMapping("/edit-book{id}")
-    public String editBookPage(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/edit-book/{id}")
+    public String editBookPage(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,
+            Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
         Book book = bookService.getBookById(id);
+        model.addAttribute("book", book); // Add the book to the model
         if (book == null) {
             return "redirect:/administrator/books";
         }

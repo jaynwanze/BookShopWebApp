@@ -28,6 +28,19 @@ public class BookService {
         return bookRepository.save(book);
     }
 
+    public Book updateBook(Long id, Book book) {
+        Book existingBook = bookRepository.findById(id).orElse(null);
+        if (existingBook != null) {
+            existingBook.setTitle(book.getTitle());
+            existingBook.setAuthor(book.getAuthor());
+            existingBook.setCategory(book.getCategory());
+            existingBook.setImage(book.getImage());
+            existingBook.setPrice(book.getPrice());
+            return bookRepository.save(existingBook);
+        }
+        return null;
+    }
+
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }

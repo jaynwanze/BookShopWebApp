@@ -11,7 +11,7 @@ import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.BookService;
 
 @Controller
-@RequestMapping("/administrator")
+@RequestMapping("/administrators")
 public class AdministratorController {
 
     @Autowired
@@ -27,24 +27,24 @@ public class AdministratorController {
         // bookService.createBook(title, author, category, description, imageUrl,
         // price);
         model.addAttribute("success", "Book created successfully!");
-        return "redirect:/books";
+        return "redirect:/administrator/manage-books";
     }
 
-    @PostMapping("/books")
-    public String saveBook(
+    @PutMapping("/books/{id}")
+    public String updateBook(
             @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id,
             @ModelAttribute("book") Book book, Model model) {
 
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
-
-        bookService.saveBook(book);
-        model.addAttribute("success", "Book saved successfully!");
-        return "redirect:/books";
+        bookService.updateBook(id, book);
+        model.addAttribute("success", "Book updated successfully!");
+        return "redirect:/administrator/manage-books";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/books/delete/{id}")
     public String deleteBook(@PathVariable Long id, Model model,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
@@ -53,7 +53,7 @@ public class AdministratorController {
         }
         bookService.deleteBook(id);
         model.addAttribute("success", "Book deleted successfully!");
-        return "redirect:/books";
+        return "redirect:/administrator/manage-books";
     }
 
     // @GetMapping("/customers"){
