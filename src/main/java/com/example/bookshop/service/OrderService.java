@@ -65,7 +65,7 @@ public class OrderService {
                     // Set the order in the order item:
                     orderItem.setOrder(order);
                     return orderItem;
-               })
+                })
                 .toList();
         // Set the order items in the order
         order.setItems(orderItems);
@@ -91,5 +91,9 @@ public class OrderService {
             // Handle payment failure (e.g., throw an exception or return an error state)
             throw new RuntimeException("Payment processing failed. Order not placed.");
         }
+    }
+
+    public List<Order> findOrdersByCustomerId(Long customerId) {
+        return orderRepository.findOrdersByCustomerId(customerId);
     }
 }

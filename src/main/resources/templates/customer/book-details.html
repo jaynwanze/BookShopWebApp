@@ -43,7 +43,7 @@
 
         <!--Review Form -->
         <h4>Leave a Review</h4>
-        <form th:action="@{/reviews/new/{bookId}(bookId=${book.id})}" method="post">
+        <form th:action="@{/customers/reviews/new/{bookId}(bookId=${book.id})}" method="post">
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating (1-5):</label>
                 <input type="number" id="rating" name="rating" class="form-control" min="1" max="5" required />

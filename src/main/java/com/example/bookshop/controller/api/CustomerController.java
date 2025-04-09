@@ -1,10 +1,13 @@
 package com.example.bookshop.controller.api;
 
 import com.example.bookshop.entity.Customer;
+import com.example.bookshop.entity.Order;
 import com.example.bookshop.entity.ShoppingCart;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.DiscountService;
+import com.example.bookshop.service.OrderService;
+import com.example.bookshop.service.ReviewService;
 import com.example.bookshop.service.ShoppingCartService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,12 @@ public class CustomerController {
 
     @Autowired
     private DiscountService discountService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     // Display a list of customers
     @GetMapping
@@ -121,6 +130,37 @@ public class CustomerController {
         }
 
         return "redirect:/customer/checkout-page";
+    }
+
+    @PostMapping("/place-order")
+    public String placeOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
+            @ModelAttribute String discount,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Order order = orderService.placeOrder(userDetails.getId(), discount);
+            redirectAttributes.addFlashAttribute("success",
+                    "Order placed successfully! Your order ID is " + order.getId());
+            return "redirect:/customer/dashboard";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/customer/checkout";
+        }
+        
+    }
+
+    @PostMapping("reviews/new/{bookId}")
+    public String addReview(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookId,
+            @RequestParam("rating") int rating,
+            @RequestParam("comment") String comment,
+            Model model) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        reviewService.createAndSaveReview(bookId, userDetails.getId(), rating, comment);
+        model.addAttribute("success", "Review added successfully!");
+        return "redirect:/customer/book/" + bookId; // Redirect to the book page after adding the review
     }
 
 }

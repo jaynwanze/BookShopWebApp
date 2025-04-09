@@ -124,7 +124,7 @@
 
       <!-- Place Order Form -->
       <div th:if="${customer.shippingAddress != null && customer.paymentMethod != null}">
-        <form th:action="@{/orders/place-order}" method="post">
+        <form th:action="@{/customers/place-order}" method="post">
           <button type="submit" class="btn btn-primary">Place Order</button>
         </form>
       </div>

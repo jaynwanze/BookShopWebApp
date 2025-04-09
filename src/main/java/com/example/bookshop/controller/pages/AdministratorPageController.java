@@ -9,10 +9,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.bookshop.entity.Book;
+import com.example.bookshop.entity.Customer;
+import com.example.bookshop.entity.Order;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.BookService;
+import com.example.bookshop.service.CustomerService;
+import com.example.bookshop.service.OrderService;
 
 @Controller
 @RequestMapping("/administrator")
@@ -20,6 +25,12 @@ public class AdministratorPageController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/dashboard")
     public String administratorDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -39,12 +50,49 @@ public class AdministratorPageController {
         return "administrator/books";
     }
 
+    // 1) Display all customers (with optional search)
     @GetMapping("/manage-customers")
-    public String manageCustomersPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String manageCustomersPage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(required = false) String search,
+            Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
-            return "redirect:/login"; // Redirect to login page if not authenticated
+            return "redirect:/login";
         }
-        return "administrator/customers";
+
+        // If "search" is provided, filter by name or email
+        List<Customer> customers;
+        if (search != null && !search.isEmpty()) {
+            customers = customerService.searchCustomersByNameOrEmail(search);
+        } else {
+            customers = customerService.findAllCustomers();
+        }
+        model.addAttribute("customers", customers);
+        return "administrator/customers"; // The template you showed
+    }
+
+    // 4) View details, including purchase history
+    @GetMapping("customer/{id}")
+    public String customerDetails(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id,
+            Model model
+    ) {
+        if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
+            return "redirect:/login";
+        }
+
+        Customer customer = customerService.getCustomerById(id);
+        if (customer == null) {
+            return "redirect:/administrator/customers"; // or some error page
+        }
+
+        // Retrieve that customer’s purchase history
+        List<Order> orders = orderService.findOrdersByCustomerId(id);
+
+        model.addAttribute("customer", customer);
+        model.addAttribute("orders", orders);
+        return "administrator/customer-details"; 
     }
 
     @GetMapping("/add-book")

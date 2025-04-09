@@ -2,6 +2,9 @@ package com.example.bookshop.service;
 
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.repository.CustomerRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +36,13 @@ public class CustomerService {
     
     public Customer getCustomerByEmailAndPassword(String email, String password) {
         return customerRepository.findByEmailAndPassword(email, password);
+    }
+
+    public List<Customer> findAllCustomers() {
+        return customerRepository.findAll();
+    }
+    
+    public List<Customer> searchCustomersByNameOrEmail(String search) {
+        return customerRepository.findCustomersByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search);
     }
 }
