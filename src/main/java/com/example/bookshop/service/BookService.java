@@ -57,7 +57,8 @@ public class BookService {
     public Book createBook(String title, String author, String category, String publisher,
             String isbn, int stockLevel, double price) {
         ProductFactory productFactory = new ProductFactory();
-        Book book = (Book) productFactory.createProduct("book", title, price, stockLevel, author, category, publisher, null, isbn);
+        Book book = (Book) productFactory.createBook(title, price, stockLevel,
+                author, isbn, category, publisher, null);
         return bookRepository.save(book);
     }
 }
