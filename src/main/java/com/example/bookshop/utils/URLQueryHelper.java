@@ -3,23 +3,23 @@ package com.example.bookshop.utils;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-public class QueryHelper {
+public class URLQueryHelper {
 
-    // Singleton instance of QueryHelper
-    private static QueryHelper instance = null;
+    // Singleton instance of URLQueryHelper
+    private static URLQueryHelper instance = null;
 
-    protected QueryHelper() {
+    protected URLQueryHelper() {
         // Prevent instantiation
     }
 
-    public static QueryHelper getInstance() {
+    public static URLQueryHelper getInstance() {
         if (instance == null) {
-            instance = new QueryHelper();
+            instance = new URLQueryHelper();
         }
         return instance;
     }
 
-    public String buildQuery(String title, String author,
+    public String buildBookSearchQuery(String title, String author,
             String publisher, String category,
             String sortField, String sortDir) {
 

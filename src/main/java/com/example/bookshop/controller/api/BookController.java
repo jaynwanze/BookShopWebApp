@@ -3,7 +3,7 @@ package com.example.bookshop.controller.api;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.BookService;
-import com.example.bookshop.utils.QueryHelper;
+import com.example.bookshop.utils.URLQueryHelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,7 +49,7 @@ public class BookController {
         model.addAttribute("category", category);
 
         if (user.hasRole("ROLE_ADMIN")) {
-            String qs = QueryHelper.getInstance().buildQuery(title, author, publisher, category,
+            String qs = URLQueryHelper.getInstance().buildBookSearchQuery(title, author, publisher, category,
                     sortField, sortDir);
             return "redirect:/administrator/manage-books" + qs;
         } else {
