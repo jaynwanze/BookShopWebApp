@@ -15,10 +15,34 @@ public class BookService {
     private BookRepository bookRepository;
 
     public List<Book> getAllBooks(String sortField, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("asc")
-                ? Sort.by(sortField).ascending()
-                : Sort.by(sortField).descending();
-        return bookRepository.findAll(sort);
+        return bookRepository.findAll(buildSort(sortField, sortDir));
+    }
+
+    public List<Book> search(String title,
+            String author,
+            String publisher,
+            String category,
+            String sortField,
+            String sortDir) {
+
+        // normalise blanks to null
+        title = (title != null && !title.isBlank()) ? title : null;
+        author = (author != null && !author.isBlank()) ? author : null;
+        publisher = (publisher != null && !publisher.isBlank()) ? publisher : null;
+        category = (category != null && !category.isBlank()) ? category : null;
+
+        // if all filters are empty, just list everything
+        if (title == null && author == null && publisher == null && category == null) {
+            return getAllBooks(sortField, sortDir);
+        }
+
+        return bookRepository.advancedSearch(title, author, publisher, category,
+                buildSort(sortField, sortDir));
+    }
+
+    private Sort buildSort(String field, String dir) {
+        return dir.equalsIgnoreCase("desc") ? Sort.by(field).descending()
+                : Sort.by(field).ascending();
     }
 
     public Book getBookById(Long id) {
@@ -44,14 +68,6 @@ public class BookService {
 
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
-    }
-
-    // search method with sorting (Strategy pattern)
-    public List<Book> searchBooksByTitle(String title, String sortField, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("asc")
-                ? Sort.by(sortField).ascending()
-                : Sort.by(sortField).descending();
-        return bookRepository.findAllByTitleContainingIgnoreCase(title, sort);
     }
 
     public Book createBook(String title, String author, String category, String publisher,

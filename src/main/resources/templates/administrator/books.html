@@ -14,13 +14,26 @@
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <!-- SEARCH FORM -->
-    <form class="row g-3 mb-3" th:action="@{/books}" method="get">
-      <div class="col-auto">
-        <input type="text" class="form-control" name="title" placeholder="Search by title, author, etc.">
+    <form class="row g-3 mb-3" th:action="@{/administrator/manage-books}" method="get">
+      <div class="col-md-3">
+        <input class="form-control" name="title" placeholder="Title" th:value="${title ?: ''}" />
       </div>
-      <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Search</button>
+      <div class="col-md-2">
+        <input class="form-control" name="author" placeholder="Author" th:value="${author ?: ''}">
+      </div>
+      <div class="col-md-2">
+        <input class="form-control" name="publisher" placeholder="Publisher" th:value="${publisher ?: ''}">
+      </div>
+      <div class="col-md-2">
+        <input class="form-control" name="category" placeholder="Category" th:value="${category ?: }">
+      </div>
+
+      <!-- keep sortField / sortDir so paging state survives a new search -->
+      <input type="hidden" name="sortField" th:value="${sortField}">
+      <input type="hidden" name="sortDir" th:value="${sortDir}">
+
+      <div class="col-md-1">
+        <button class="btn btn-primary w-100">Search</button>
       </div>
     </form>
 
@@ -58,8 +71,11 @@
         <tr>
           <th>Title</th>
           <th>Author</th>
+          <th>Publisher</th>
+          <th>Category</th>
           <th>Stock</th>
           <th>Price</th>
+          <th>ISBN</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -67,8 +83,11 @@
         <tr th:each="book : ${books}">
           <td th:text="${book.title}">Title</td>
           <td th:text="${book.author}">Author</td>
+          <td th:text="${book.publisher}">Publisher</td>
+          <td th:text="${book.category}">Category</td>
           <td th:text="${book.stockLevel}">0</td>
           <td th:text="${book.price}">0.00</td>
+          <td th:text="${book.isbn}">ISBN</td>
           <td>
             <a th:href="@{/administrator/edit-book/{id}(id=${book.id})}" class="btn btn-sm btn-primary">Edit</a>
             <form th:action="@{/administrators/books/delete/{id}(id=${book.id})}" method="post" style="display:inline;">

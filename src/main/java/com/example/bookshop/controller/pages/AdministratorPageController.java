@@ -41,12 +41,33 @@ public class AdministratorPageController {
     }
 
     @GetMapping("/manage-books")
-    public String manageBooksPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
-            return "redirect:/login"; // Redirect to login page if not authenticated
+    public String manageBooksPage(
+            @AuthenticationPrincipal CustomUserDetails user,
+            /* same filters as before ------------------------------------ */
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String publisher,
+            @RequestParam(required = false) String category,
+            /* sorting ---------------------------------------------------- */
+            @RequestParam(defaultValue = "title") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
+
+        if (user == null || !user.hasRole("ROLE_ADMIN")) {
+            return "redirect:/login";
         }
-        List<Book> books = bookService.getAllBooks("title", "asc");
+
+        List<Book> books = bookService.search(title, author, publisher, category,
+                sortField, sortDir);
+
         model.addAttribute("books", books);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("title", title);
+        model.addAttribute("author", author);
+        model.addAttribute("publisher", publisher);
+        model.addAttribute("category", category);
+
         return "administrator/books";
     }
 
@@ -76,8 +97,7 @@ public class AdministratorPageController {
     public String customerDetails(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long id,
-            Model model
-    ) {
+            Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login";
         }
@@ -92,7 +112,7 @@ public class AdministratorPageController {
 
         model.addAttribute("customer", customer);
         model.addAttribute("orders", orders);
-        return "administrator/customer-details"; 
+        return "administrator/customer-details";
     }
 
     @GetMapping("/add-book")
