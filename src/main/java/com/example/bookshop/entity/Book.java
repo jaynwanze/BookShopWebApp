@@ -11,7 +11,7 @@ public class Book extends Product {
     private String isbn;
 
     @Column(columnDefinition = "MEDIUMBLOB")
-    private String image;
+    private byte[] image;
 
     public Book() {
         super();
@@ -36,7 +36,7 @@ public class Book extends Product {
         private String publisher;
         private String category;
         private String isbn;
-        private String image;
+        private byte[] image; // <- change to byte[]
 
         public Builder title(String title) {
             this.title = title;
@@ -73,7 +73,7 @@ public class Book extends Product {
             return this;
         }
 
-        public Builder image(String image) {
+        public Builder image(byte[] image) {
             this.image = image;
             return this;
         }
@@ -116,11 +116,11 @@ public class Book extends Product {
         this.isbn = isbn;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 

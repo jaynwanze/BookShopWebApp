@@ -16,11 +16,10 @@
         <p><strong>Publisher:</strong> <span th:text="${book.publisher}">Publisher</span></p>
         <p><strong>Category:</strong> <span th:text="${book.category}">Category</span></p>
         <p><strong>ISBN:</strong> <span th:text="${book.isbn}">ISBN</span></p>
-        <img th:if="${book.image != null}" th:src="@{'data:image/png;base64,' + ${book.image}}" alt="Book Cover"
-            style="max-width:200px; max-height:300px;" />
-
+        <img th:if="${book.image != null}"
+            th:src="'data:image/jpeg;base64,' + ${T(org.apache.tomcat.util.codec.binary.Base64).encodeBase64String(book.image)}"
+            alt="Book cover" style="max-width:200px; max-height:300px;" />
         <hr />
-
         <!-- Reviews Section -->
         <div th:if="${success}" class="mb-3 alert alert-success" id="successMessage"></div>
         <div th:if="${error}" class="mb-3 alert alert-danger" id="errorMessage"></div>

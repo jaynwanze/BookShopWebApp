@@ -1,10 +1,14 @@
 package com.example.bookshop.controller.api;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.security.CustomUserDetails;
@@ -27,12 +31,25 @@ public class AdministratorController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String publisher,
             @RequestParam(required = false) String isbn,
-            Model model) {
+            @RequestParam("imageFile") MultipartFile imageFile, // ①
+            Model model,
+            RedirectAttributes redirect) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
+
+        byte[] image = null;
+        try {
+            if (!imageFile.isEmpty()) {
+                image = imageFile.getBytes(); // ②
+            }
+        } catch (IOException ex) {
+            redirect.addFlashAttribute("error", "Could not read image: " + ex.getMessage());
+            return "redirect:/administrator/add‑book";
+        }
+
         bookService.createBook(title, author, category, publisher, isbn, stockLevel,
-                price);
+                price, image);
         model.addAttribute("success", "Book created successfully!");
         return "redirect:/administrator/manage-books";
     }

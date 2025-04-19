@@ -9,7 +9,7 @@
 <body>
     <div class="container mt-5">
         <h2>Add Book</h2>
-        <form th:action="@{/administrators/books}" method="post">
+        <form th:action="@{/administrators/books}" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title:</label>
                 <input id="title" name="title" type="text" class="form-control" required />
@@ -39,8 +39,8 @@
                 <input id="isbn" name="isbn" type="text" class="form-control" />
             </div>
             <div class="mb-3">
-                <label for="image" class="form-label">Image:</label>
-                <input id="image" name="image" type="file" class="form-control" accept="image/*" />
+                <label for="image" class="form-label">Cover (jpg / png):</label>
+                <input id="image" name="imageFile" type="file" class="form-control" accept="image/*">
             </div>
             <button type="submit" class="btn btn-primary">Add New Book</button>
             <a th:href="@{/administrator/manage-books}" class="btn btn-secondary">Cancel</a>

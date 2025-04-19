@@ -1,5 +1,6 @@
 package com.example.bookshop.controller.pages;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,12 @@ public class AdministratorPageController {
         if (book == null) {
             return "redirect:/administrator/books";
         }
+
+        model.addAttribute("currentImage",
+                book.getImage() == null ? null
+                        : "data:image/png;base64," +
+                                Base64.getEncoder().encodeToString(book.getImage()));
+
         return "administrator/book-form-edit";
     }
 

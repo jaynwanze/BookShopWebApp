@@ -6,6 +6,8 @@ import com.example.bookshop.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -71,10 +73,10 @@ public class BookService {
     }
 
     public Book createBook(String title, String author, String category, String publisher,
-            String isbn, int stockLevel, double price) {
+            String isbn, int stockLevel, double price, byte[] image) {
         ProductFactory productFactory = new ProductFactory();
         Book book = (Book) productFactory.createBook(title, price, stockLevel,
-                author, isbn, category, publisher, null);
+                author, isbn, category, publisher, image);
         return bookRepository.save(book);
     }
 }
