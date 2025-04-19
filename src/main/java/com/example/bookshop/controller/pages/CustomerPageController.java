@@ -1,5 +1,6 @@
 package com.example.bookshop.controller.pages;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,10 +123,16 @@ public class CustomerPageController {
             model.addAttribute("error", "Book not found");
             return "redirect:/customer/catalog";
         }
+
         // Retrieve all reviews for this book
         List<Review> reviews = reviewService.getReviewsForBook(id);
 
+        // Add the book and reviews to the model
         model.addAttribute("book", book);
+        model.addAttribute("currentImage",
+                book.getImage() == null ? null
+                        : "data:image/png;base64," +
+                                Base64.getEncoder().encodeToString(book.getImage()));
         model.addAttribute("reviews", reviews);
         return "customer/book-details";
     }

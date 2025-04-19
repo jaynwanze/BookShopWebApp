@@ -59,14 +59,6 @@
                 </small>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label" for="imageFile">Cover image</label>
-                <input id="imageFile" name="imageFile" type="file" accept="image/*" class="form-control">
-                <small class="form-text text-muted">
-                    Leave blank to keep the current cover.
-                </small>
-            </div>
-
             <div class="mb-4" th:if="${currentImage != null}">
                 <img th:src="${currentImage}" alt="Current cover" class="img-thumbnail" style="max-height:180px">
             </div>
