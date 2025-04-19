@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.CartItem;
@@ -71,14 +72,32 @@ public class CustomerPageController {
     }
 
     @GetMapping("/catalog")
-    public String catalogPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+    public String catalogPage(@AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String publisher,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "title") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
+
         if (userDetails == null) {
             return "redirect:/login";
         }
 
         // Intial sort by title in ascending order
-        List<Book> books = bookService.getAllBooks("title", "asc");
+        List<Book> books = bookService.search(title, author, publisher, category,
+                sortField, sortDir);
+
         model.addAttribute("books", books);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("title", title);
+        model.addAttribute("author", author);
+        model.addAttribute("publisher", publisher);
+        model.addAttribute("category", category);
+        
         return "customer/catalog";
     }
 

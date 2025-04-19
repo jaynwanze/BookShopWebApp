@@ -51,12 +51,10 @@ public class AdministratorPageController {
     @GetMapping("/manage-books")
     public String manageBooksPage(
             @AuthenticationPrincipal CustomUserDetails user,
-            /* same filters as before ------------------------------------ */
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String author,
             @RequestParam(required = false) String publisher,
             @RequestParam(required = false) String category,
-            /* sorting ---------------------------------------------------- */
             @RequestParam(defaultValue = "title") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir,
             Model model) {

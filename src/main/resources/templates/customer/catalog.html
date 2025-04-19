@@ -11,12 +11,26 @@
         <h2>Book Catalog</h2>
 
         <!-- SEARCH FORM -->
-        <form class="row g-3 mb-3" th:action="@{/books}" method="get">
-            <div class="col-auto">
-                <input type="text" class="form-control" name="title" placeholder="Search by title, author, etc.">
+        <form class="row g-3 mb-3" th:action="@{/customer/catalog}" method="get">
+            <div class="col-md-3">
+                <input class="form-control" name="title" placeholder="Title" th:value="${title ?: ''}" />
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">Search</button>
+            <div class="col-md-2">
+                <input class="form-control" name="author" placeholder="Author" th:value="${author ?: ''}">
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" name="publisher" placeholder="Publisher" th:value="${publisher ?: ''}">
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" name="category" placeholder="Category" th:value="${category ?: }">
+            </div>
+
+            <!-- keep sortField / sortDir so paging state survives a new search -->
+            <input type="hidden" name="sortField" th:value="${sortField}">
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+
+            <div class="col-md-1">
+                <button class="btn btn-primary w-100">Search</button>
             </div>
         </form>
 
@@ -65,6 +79,7 @@
                     <th>Publisher</th>
                     <th>Price</th>
                     <th>Stock</th>
+                    <th>ISBN</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -75,6 +90,7 @@
                     <td th:text="${book.publisher}">Publisher</td>
                     <td th:text="${book.price}">0.00</td>
                     <td th:text="${book.stockLevel}">0</td>
+                    <td th:text="${book.isbn}">ISBN</td>
                     <td>
                         <div th:if="${book.stockLevel == 0}" class="alert alert-danger" role="alert">Out of Stock</div>
                         <div th:if="${book.stockLevel > 0}">
