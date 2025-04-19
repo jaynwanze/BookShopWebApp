@@ -20,6 +20,11 @@
             </div>
         </form>
 
+        <div class="mb-3">
+            <a th:text="${error}" class="alert alert-danger" th:if="${error}" id="error">Error message here</a>
+            <a th:text="${success}" class="alert alert-success" th:if="${success}" id="success">Success message here</a>
+        </div>
+
         <!-- Customers table -->
         <table class="table table-bordered">
             <thead>
@@ -35,22 +40,17 @@
                 <tr th:each="customer : ${customers}">
                     <td th:text="${customer.name}">Customer Name</td>
                     <td th:text="${customer.email}">email@example.com</td>
-                    <td th:text="${customer.shippingAddress}">123 Main St</td>
-                    <td th:text="${customer.paymentMethod}">Visa **** 1234</td>
+                    <td
+                        th:text="${customer.shippingAddress.street} + ', ' + ${customer.shippingAddress.city} + ', ' + ${customer.shippingAddress.state}+ ', ' + ${customer.shippingAddress.postalCode}+ ', ' + ${customer.shippingAddress.country}">
+                        123 Main St, Dublin</td>
+                    <td th:text="${customer.paymentMethod.type}">Visa **** 1234</td>
                     <td>
-                        <a th:href="@{/administrator/customers/edit/{id}(id=${customer.id})}"
-                            class="btn btn-warning btn-sm">Edit</a>
-                        <a th:href="@{/administrator/customers/details/{id}(id=${customer.id})}"
-                            class="btn btn-info btn-sm">Details</a>
-                        <form th:action="@{/administrator/customers/delete/{id}(id=${customer.id})}" method="post"
-                            style="display:inline;">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+                        <a th:href="@{/administrator/customer-details/{id}(id=${customer.id})}"
+                            class="btn btn-info btn-sm">View Details</a>
                     </td>
                 </tr>
             </tbody>
         </table>
-
         <div class="mt-3">
             <a th:href="@{/administrator/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
         </div>
@@ -58,3 +58,19 @@
 </body>
 
 </html>
+
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            const successMessage = document.getElementById('success');
+            const errorMessage = document.getElementById('error');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }, 3000);
+    };
+
+</script>

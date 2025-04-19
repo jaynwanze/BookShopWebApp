@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.Customer;
@@ -135,5 +136,24 @@ public class AdministratorPageController {
             return "redirect:/administrator/books";
         }
         return "administrator/book-form-edit";
+    }
+
+    @GetMapping("/customer-details/{id}")
+    public String customerDetailsPage(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,
+            Model model, RedirectAttributes redirectAttributes) {
+        if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
+            return "redirect:/login"; // Redirect to login page if not authenticated
+        }
+        // Check if the customer exists
+        Customer customer = customerService.getCustomerById(id);
+        if (customer == null) {
+            redirectAttributes.addFlashAttribute("error", "Customer not found.");
+            return "redirect:/administrator/customers";
+        }
+        model.addAttribute("customer", customer);
+        // Retrieve that customer’s purchase history
+        List<Order> orders = orderService.findOrdersByCustomerId(id);
+        model.addAttribute("orders", orders);
+        return "administrator/customer-details";
     }
 }

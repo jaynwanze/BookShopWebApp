@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -19,16 +20,16 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long customerId;
-    
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
-    
+
     private double total;
     private Date orderDate;
-    
+
     @Embedded
     private ShippingAddress shippingAddress;
-    
+
     @Embedded
     private PaymentMethod paymentMethod;
 
@@ -40,6 +41,10 @@ public class Order {
         this.orderDate = builder.orderDate;
         this.shippingAddress = builder.shippingAddress;
         this.paymentMethod = builder.paymentMethod;
+    }
+
+    // Default constructor for JPA
+    public Order() {
     }
 
     // Builder class

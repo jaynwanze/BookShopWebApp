@@ -1,47 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Customer Details</title>
+    <title th:text="'Details – ' + ${customer.name}">Customer Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container mt-5">
-    <h2 th:text="'Details for ' + ${customer.name}">Customer Details</h2>
-    
-    <p><strong>Email:</strong> <span th:text="${customer.email}">email@example.com</span></p>
-    <p><strong>Shipping Address:</strong>
-        <!-- If using an embedded object, you might show e.g. customer.shippingAddress.street, etc. -->
-        <span th:text="${customer.shippingAddress}">123 Main St</span>
-    </p>
-    <p><strong>Payment Method:</strong> <span th:text="${customer.paymentMethod}">Visa</span></p>
-    
-    <hr>
-    <h4>Purchase History</h4>
-    <div th:if="${#lists.isEmpty(orders)}">
-        <p>No orders placed by this customer.</p>
+    <div class="container mt-5">
+        <h2 th:text="'Customer Details – ' + ${customer.name}">Customer Details</h2>
+        <p><strong>Email:</strong> <span th:text="${customer.email}">email@example.com</span></p>
+        <p>
+            <strong>Shipping Address:</strong><br>
+            <span th:text="${customer.shippingAddress.street}">...</span><br>
+            <span th:text="${customer.shippingAddress.city}">...</span>,
+            <span th:text="${customer.shippingAddress.state}">...</span><br>
+            <span th:text="${customer.shippingAddress.postalCode}">...</span>,
+            <span th:text="${customer.shippingAddress.country}">...</span>
+        </p>
+        <p>
+            <strong>Payment Method:</strong>
+            <span th:text="${customer.paymentMethod.type}">Visa</span>
+        </p>
+        <hr>
+        <h4>Purchase History</h4>
+
+        <!-- No orders -->
+        <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info">
+            This customer has not placed any orders yet.
+        </div>
+
+        <!-- Orders table -->
+        <table class="table table-bordered align-middle" th:if="${!#lists.isEmpty(orders)}">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total (€)</th>
+                    <th># Items</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order, stat : ${orders}">
+                    <td th:text="${order.id}">1</td>
+                    <td th:text="${order.orderDate}">
+                        08 Apr 2025 13:36
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(order.total,1,'COMMA',2,'POINT')}"
+                        th:classappend="${order.total > 100} ? 'text-danger fw-bold' : 'text-success'">
+                        29.97
+                    </td>
+                    <td th:text="${order.items.size()}">3</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info" type="button" data-bs-toggle="collapse"
+                            th:attr="data-bs-target='#orderItems__' + ${stat.index}">
+                            Items
+                        </button>
+                    </td>
+                </tr>
+
+                <tr th:each="order, stat : ${orders}">
+                    <td colspan="5" class="collapse" th:id="'orderItems__' + ${stat.index}">
+                        <table class="table table-bordered mt-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price (€/unit)</th>
+                                    <th>Total (€)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${order.items}">
+                                    <td th:text="${item.book.title}">Product Name</td>
+                                    <td th:text="${item.quantity}">1</td>
+                                    <td th:text="${#numbers.formatDecimal(item.price,1,'COMMA',2,'POINT')}">9.99</td>
+                                    <td
+                                        th:text="${#numbers.formatDecimal(item.quantity * item.price,1,'COMMA',2,'POINT')}">
+                                        9.99</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+
+            </tbody>
+        </table>
+
+        <!-- Back link -->
+        <a th:href="@{/administrator/manage-customers}" class="btn btn-secondary mt-3">
+            Back to Customers
+        </a>
     </div>
-    <table class="table" th:if="${!#lists.isEmpty(orders)}">
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th># of Items</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="order : ${orders}">
-                <td th:text="${order.id}">1</td>
-                <td th:text="${order.orderDate}">2025-04-08</td>
-                <td th:text="${order.total}">0.00</td>
-                <td th:text="${order.items.size()}">0</td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <div class="mt-3">
-        <a th:href="@{/administrator/customers}" class="btn btn-secondary">Back to Customers</a>
-    </div>
-</div>
 </body>
 </html>
