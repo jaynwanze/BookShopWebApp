@@ -45,4 +45,9 @@ public class CustomerService {
     public List<Customer> searchCustomersByNameOrEmail(String search) {
         return customerRepository.findCustomersByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search);
     }
+
+    public String getCustomerNameById(Long id) {
+        Customer customer = customerRepository.findById(id).orElse(null);
+        return customer != null ? customer.getName() : null;
+    }
 }

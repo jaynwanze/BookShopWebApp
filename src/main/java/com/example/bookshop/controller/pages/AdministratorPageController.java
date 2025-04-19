@@ -16,6 +16,7 @@ import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.Order;
 import com.example.bookshop.security.CustomUserDetails;
+import com.example.bookshop.service.AdministratorService;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.OrderService;
@@ -33,12 +34,16 @@ public class AdministratorPageController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private AdministratorService adminService;
+
     @GetMapping("/dashboard")
     public String administratorDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
-        model.addAttribute("adminName", userDetails.getUsername());
+        String adminName = adminService.getAdministratorNameById(userDetails.getId());
+        model.addAttribute("adminName", adminName);
         return "administrator/dashboard";
     }
 

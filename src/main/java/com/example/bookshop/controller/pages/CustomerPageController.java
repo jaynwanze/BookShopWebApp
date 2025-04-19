@@ -42,7 +42,8 @@ public class CustomerPageController {
         if (userDetails == null) {
             return "redirect:/login";
         }
-
+        String customerName = customerService.getCustomerNameById(userDetails.getId());
+        model.addAttribute("customerName", customerName);
         return "customer/dashboard";
     }
 

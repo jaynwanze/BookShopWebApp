@@ -30,4 +30,9 @@ public class AdministratorService {
     public Administrator getAdministratorByEmailAndPassword(String email, String password) {
         return administratorRepository.findByEmailAndPassword(email, password);
     }
+
+    public String getAdministratorNameById(Long id) {
+        Administrator admin = administratorRepository.findById(id).orElse(null);
+        return admin != null ? admin.getName() : null;
+    }
 }
