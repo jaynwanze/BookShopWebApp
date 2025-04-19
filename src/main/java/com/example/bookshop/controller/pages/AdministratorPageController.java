@@ -34,10 +34,11 @@ public class AdministratorPageController {
     private OrderService orderService;
 
     @GetMapping("/dashboard")
-    public String administratorDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String administratorDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
+        model.addAttribute("adminName", userDetails.getUsername());
         return "administrator/dashboard";
     }
 
