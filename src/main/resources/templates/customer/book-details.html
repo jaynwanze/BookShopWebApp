@@ -17,7 +17,8 @@
         <p><strong>Category:</strong> <span th:text="${book.category}">Category</span></p>
         <p><strong>ISBN:</strong> <span th:text="${book.isbn}">ISBN</span></p>
         <div class="mb-4" th:if="${currentImage != null}">
-            <img th:src="${currentImage}" alt="Book cover" style="max-width:200px; max-height:300px;" />
+            <h4>Image:</h4>
+            <img th:src="${currentImage}" alt="Book Image" style="max-width:200px; max-height:300px;" />
         </div>
         <hr />
         <!-- Reviews Section -->
