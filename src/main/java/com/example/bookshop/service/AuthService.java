@@ -14,6 +14,8 @@ import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.User;
 import com.example.bookshop.factory.user.AdministratorFactory;
 import com.example.bookshop.factory.user.CustomerFactory;
+import com.example.bookshop.validation.LoginValidator;
+import com.example.bookshop.validation.RegisterValidator;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -38,11 +40,13 @@ public class AuthService {
     // Register a new Customer
     public String registerCustomer(String email, String name, String rawPassword,
             RedirectAttributes redirectAttributes) {
-        // Check if user with this email already exists
-        Customer existingUser = customerService.getCustomerByEmail(email);
-        if (existingUser != null) {
-            redirectAttributes.addFlashAttribute("error", "User already exists.");
-            return "redirect:/login";
+        // Validate the input
+        RegisterValidator v = new RegisterValidator(
+                email, name, rawPassword);
+
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/register/customer";
         }
 
         // Create & save the new Customer with a hashed password
@@ -71,12 +75,13 @@ public class AuthService {
     // Login an existing Customer
     public String loginCustomer(String email, String rawPassword,
             RedirectAttributes redirectAttributes) {
-        // 1) Check DB just to confirm user exists
-        User found = customerService.getCustomerByEmail(email);
-        if (found == null) {
-            redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
-            return "redirect:/login";
+        // Validate the input
+        LoginValidator v = new LoginValidator(email, rawPassword);
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/customer/login";
         }
+
         // Attempt authentication
         try {
             Authentication authResult = authenticationManager.authenticate(
@@ -96,13 +101,14 @@ public class AuthService {
     public String registerAdministrator(String email, String name, String rawPassword,
             String jobTitle, String department,
             RedirectAttributes redirectAttributes) {
-        // Check if user exists
-        Administrator existingUser = administratorService.getAdministratorByEmail(email);
-        if (existingUser != null) {
-            redirectAttributes.addFlashAttribute("error", "User already exists.");
-            return "redirect:/login";
-        }
+        // Validate the input
+        RegisterValidator v = new RegisterValidator(
+                email, name, rawPassword);
 
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/register/administrator";
+        }
         // Create & save Administrator with hashed password
         AdministratorFactory factory = new AdministratorFactory(jobTitle, department);
         Administrator admin = (Administrator) factory.createUser(name, email, rawPassword);
@@ -127,13 +133,12 @@ public class AuthService {
     // Login an existing Administrator
     public String loginAdministrator(String email, String rawPassword,
             RedirectAttributes redirectAttributes) {
-        // Check DB just to confirm user exists (optional)
-        com.example.bookshop.entity.User found = administratorService.getAdministratorByEmail(email);
-        if (found == null) {
-            redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
-            return "redirect:/login";
+        // Validate the input
+        LoginValidator v = new LoginValidator(email, rawPassword);
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/administrator/login";
         }
-
         // authentication
         try {
             Authentication authResult = authenticationManager.authenticate(

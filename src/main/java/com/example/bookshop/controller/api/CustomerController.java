@@ -9,6 +9,7 @@ import com.example.bookshop.service.DiscountService;
 import com.example.bookshop.service.OrderService;
 import com.example.bookshop.service.ReviewService;
 import com.example.bookshop.service.ShoppingCartService;
+import com.example.bookshop.validation.CardValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -76,6 +77,9 @@ public class CustomerController {
     @PostMapping("/cart/add/{bookId}")
     public String addItemToCart(@AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long bookId, RedirectAttributes redirectAttributes) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
         // Add quantity parameter to the method signature
         int quantity = 1; // Default quantity to add
         ShoppingCart cart = shoppingCartService.getShoppingCart(userDetails.getId());
@@ -92,6 +96,9 @@ public class CustomerController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long bookId,
             RedirectAttributes redirectAttributes) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
         ShoppingCart cart = shoppingCartService.getShoppingCart(userDetails.getId());
         cart.removeItem(bookId);
@@ -108,6 +115,9 @@ public class CustomerController {
             @ModelAttribute("customer") Customer customerFromForm,
             @RequestParam(required = false) String discountCode,
             RedirectAttributes redirectAttributes) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
 
         // Update shipping and payment info
         Customer customer = customerService.getCustomerById(userDetails.getId());
@@ -136,6 +146,16 @@ public class CustomerController {
     public String placeOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
             @ModelAttribute String discount,
             RedirectAttributes redirectAttributes) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        // Validate payment method
+        Customer customer = customerService.getCustomerById(userDetails.getId());
+        CardValidator v = new CardValidator(customer.getPaymentMethod());
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/customer/checkout-page";
+        }
         try {
             Order order = orderService.placeOrder(userDetails.getId(), discount);
             redirectAttributes.addFlashAttribute("success",
@@ -145,7 +165,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/customer/checkout";
         }
-        
+
     }
 
     @PostMapping("reviews/new/{bookId}")
