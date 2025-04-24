@@ -65,7 +65,7 @@ public class AuthService {
             request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Could not auto-login: " + ex.getMessage());
-            return "redirect:/login";
+            return "redirect:/login/customer";
         }
 
         // Redirect to the customer dashboard
@@ -79,7 +79,7 @@ public class AuthService {
         LoginValidator v = new LoginValidator(email, rawPassword);
         if (!v.validate()) {
             redirectAttributes.addFlashAttribute("error", v.getError());
-            return "redirect:/customer/login";
+            return "redirect:/login/customer";
         }
 
         // Attempt authentication
@@ -90,9 +90,8 @@ public class AuthService {
             request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
-            return "redirect:/login";
+            return "redirect:/login/customer";
         }
-
         // Redirect to customer dashboard
         return "redirect:/customer/dashboard";
     }
@@ -123,9 +122,8 @@ public class AuthService {
             request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Could not auto-login: " + ex.getMessage());
-            return "redirect:/login";
+            return "redirect:/login/administrator";
         }
-
         // Redirect to the admin dashboard (define your route)
         return "redirect:/administrator/dashboard";
     }
@@ -147,7 +145,7 @@ public class AuthService {
             request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", "Invalid credentials.");
-            return "redirect:/login";
+            return "redirect:/login/administrator";
         }
 
         // Redirect to admin dashboard

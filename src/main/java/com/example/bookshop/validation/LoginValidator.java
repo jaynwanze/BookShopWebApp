@@ -17,4 +17,17 @@ public class LoginValidator extends AbstractValidator {
         }
         return true;
     }
+
+    @Override
+    protected boolean formatChecks() {
+        if (!email.matches("^[\\w.%+-]+@\\w+\\.\\w{2,}$")) {
+            invalidate("Invalid e-mail address");
+            return false;
+        }
+        if (plainPwd.length() < 6) {
+            invalidate("Password must be at least 6 characters");
+            return false;
+        }
+        return true;
+    }
 }
