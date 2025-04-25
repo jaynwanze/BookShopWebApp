@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.entity.Administrator;
@@ -132,14 +133,23 @@ public class AdministratorPageController {
 
     @GetMapping("/edit-book/{id}")
     public String editBookPage(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,
-            Model model) {
+            Model model,
+            @RequestParam(name = "imageFile", required = false) MultipartFile imageFile,
+            RedirectAttributes redirectAttributes) {
+
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
         Book book = bookService.getBookById(id);
         model.addAttribute("book", book); // Add the book to the model
-        if (book == null) {
-            return "redirect:/administrator/books";
+
+        try {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                book.setImage(imageFile.getBytes());
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not read image: " + e.getMessage());
+            return "redirect:/administrator/edit-book/" + id;
         }
 
         model.addAttribute("currentImage",
@@ -148,6 +158,7 @@ public class AdministratorPageController {
                                 Base64.getEncoder().encodeToString(book.getImage()));
 
         return "administrator/book-form-edit";
+
     }
 
     @GetMapping("/customer-details/{id}")

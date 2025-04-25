@@ -9,6 +9,8 @@
 <body>
     <div class="container mt-5">
         <h2>Edit Book</h2>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}" id="successMessage"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage"></div>
         <form th:action="@{/administrators/books/{id}(id=${book.id})}" th:object="${book}" method="post"
             enctype="multipart/form-data">
 
@@ -72,3 +74,19 @@
 </body>
 
 </html>
+
+
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }, 3000);
+    };
+</script>

@@ -74,14 +74,31 @@ public class AdministratorController {
     public String updateBook(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long id,
-            @ModelAttribute("book") Book book, Model model) {
+            @ModelAttribute("book") Book book, Model model,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            RedirectAttributes redirect) {
 
         if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
             return "redirect:/login"; // Redirect to login page if not authenticated
         }
+
+        try {
+            /* keep existing image unless a new one was chosen */
+            if (imageFile != null && !imageFile.isEmpty()) {
+                book.setImage(imageFile.getBytes());
+            } else {
+                byte[] current = bookService.getBookById(id).getImage();
+                book.setImage(current);
+            }
+        } catch (
+
+        IOException ex) {
+            redirect.addFlashAttribute("error", "Could not read image: " + ex.getMessage());
+            return "redirect:/administrator/edit-book/" + id;
+        }
         bookService.updateBook(id, book);
-        model.addAttribute("success", "Book updated successfully!");
-        return "redirect:/administrator/manage-books";
+        redirect.addFlashAttribute("success", "Book updated successfully!");
+        return "redirect:/administrator/edit-book/" + id;
     }
 
     @DeleteMapping("/books/delete/{id}")
