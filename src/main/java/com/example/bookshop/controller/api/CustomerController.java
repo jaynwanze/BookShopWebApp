@@ -9,12 +9,15 @@ import com.example.bookshop.service.DiscountService;
 import com.example.bookshop.service.OrderService;
 import com.example.bookshop.service.ReviewService;
 import com.example.bookshop.service.ShoppingCartService;
+import com.example.bookshop.validation.AddressValidator;
 import com.example.bookshop.validation.CardValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,20 +40,6 @@ public class CustomerController {
     @Autowired
     private ReviewService reviewService;
 
-    // Display a list of customers
-    @GetMapping
-    public String listCustomers(Model model) {
-        // model.addAttribute("customers", customerService.getAllCustomers());
-        return "customer-list"; // Thymeleaf template name
-    }
-
-    // Show form to add a new customer
-    @GetMapping("/new")
-    public String showNewCustomerForm(Model model) {
-        // model.addAttribute("customer", new Customer());
-        return "customer-form";
-    }
-
     // Process form submission to save a customer
     @PostMapping
     public String saveCustomer(Customer customer) {
@@ -59,11 +48,35 @@ public class CustomerController {
     }
 
     // Show form to edit an existing customer
-    @GetMapping("/edit/{id}")
-    public String showEditCustomerForm(@PathVariable Long id, Model model) {
-        // Customer customer = customerService.getCustomerById(id);
-        // model.addAttribute("customer", customer);
-        return "customer-form";
+    @PutMapping("/{id}")
+    public String updateCustomer(@PathVariable Long id, @ModelAttribute("customer") Customer customer,
+            BindingResult binding,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+
+        CardValidator v = new CardValidator(customer.getPaymentMethod());
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/customer/profile";
+        }
+
+        // Validate shipping address
+        AddressValidator addressValidator = new AddressValidator(customer.getShippingAddress());
+        if (!addressValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", addressValidator.getError());
+            return "redirect:/customer/profile";
+        }
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        if (binding.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Error updating customer details.");
+            return "redirect:/customer/profile";
+        }
+        customerService.updateCustomer(customer);
+        redirectAttributes.addFlashAttribute("success", "Customer details updated successfully.");
+        return "redirect:/customer/profile";
     }
 
     // Delete a customer
@@ -121,12 +134,18 @@ public class CustomerController {
 
         // Update shipping and payment info
         Customer customer = customerService.getCustomerById(userDetails.getId());
-        if (customerFromForm.getShippingAddress() != null) {
-            customer.setShippingAddress(customerFromForm.getShippingAddress());
+        CardValidator v = new CardValidator(customerFromForm.getPaymentMethod());
+        if (!v.validate()) {
+            redirectAttributes.addFlashAttribute("error", v.getError());
+            return "redirect:/customer/checkout-page";
         }
-        if (customerFromForm.getPaymentMethod() != null) {
-            customer.setPaymentMethod(customerFromForm.getPaymentMethod());
+        AddressValidator addressValidator = new AddressValidator(customerFromForm.getShippingAddress());
+        if (!addressValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", addressValidator.getError());
+            return "redirect:/customer/checkout-page";
         }
+        customer.setShippingAddress(customerFromForm.getShippingAddress());
+        customer.setPaymentMethod(customerFromForm.getPaymentMethod());
         customerService.updateCustomer(customer);
 
         // Validate discount code

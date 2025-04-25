@@ -1,7 +1,5 @@
 package com.example.bookshop.validation;
 
-import com.example.bookshop.security.CustomUserDetails;
-
 public abstract class AbstractValidator {
 
     private String error;

@@ -68,6 +68,15 @@ public class CustomerPageController {
         if (userDetails == null) {
             return "redirect:/login";
         }
+        // Retrieve the customer by ID
+        Customer customer = customerService.getCustomerById(userDetails.getId());
+        if (customer == null) {
+            model.addAttribute("error", "Customer not found");
+            return "redirect:/customer/dashboard";
+        }
+
+        // Add the customer to the model
+        model.addAttribute("customer", customer);
         return "customer/profile";
     }
 
