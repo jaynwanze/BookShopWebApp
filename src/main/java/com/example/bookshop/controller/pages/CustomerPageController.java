@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.CartItem;
 import com.example.bookshop.entity.Customer;
+import com.example.bookshop.entity.Order;
 import com.example.bookshop.entity.PaymentMethod;
 import com.example.bookshop.entity.Review;
 import com.example.bookshop.entity.ShippingAddress;
@@ -23,6 +24,7 @@ import com.example.bookshop.entity.ShoppingCart;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CustomerService;
+import com.example.bookshop.service.OrderService;
 import com.example.bookshop.service.ReviewService;
 import com.example.bookshop.service.ShoppingCartService;
 
@@ -41,6 +43,9 @@ public class CustomerPageController {
 
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/dashboard")
     public String customerDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -88,8 +93,10 @@ public class CustomerPageController {
             customer.setPaymentMethod(new PaymentMethod());
         }
 
+        List<Order> orders = orderService.findOrdersByCustomerId(userDetails.getId());
         // Add the customer to the model
         model.addAttribute("customer", customer);
+        model.addAttribute("orders", orders);
         return "customer/profile";
     }
 
