@@ -13,19 +13,28 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
-    
+
     public Customer registerCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
-    
+
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email);
     }
-    
-    public Customer updateCustomer(Customer customer) {
-        return customerRepository.save(customer);
+
+    public Customer updateCustomer(Customer updated) {
+
+        Customer stored = customerRepository.findById(updated.getId())
+                .orElseThrow();
+
+        //copy only the fields that are allowed to change */
+        stored.setName(updated.getName());
+        stored.setShippingAddress(updated.getShippingAddress());
+        stored.setPaymentMethod(updated.getPaymentMethod());
+
+        return customerRepository.save(stored);
     }
-    
+
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
@@ -33,7 +42,7 @@ public class CustomerService {
     public Customer getCustomerById(Long id) {
         return customerRepository.findById(id).orElse(null);
     }
-    
+
     public Customer getCustomerByEmailAndPassword(String email, String password) {
         return customerRepository.findByEmailAndPassword(email, password);
     }
@@ -41,7 +50,7 @@ public class CustomerService {
     public List<Customer> findAllCustomers() {
         return customerRepository.findAll();
     }
-    
+
     public List<Customer> searchCustomersByNameOrEmail(String search) {
         return customerRepository.findCustomersByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search);
     }

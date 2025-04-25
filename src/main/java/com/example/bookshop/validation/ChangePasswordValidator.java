@@ -7,19 +7,16 @@ public class ChangePasswordValidator extends AbstractValidator {
 
     private String newPassword;
     private String repeat;
-    private String oldPassword;
 
-    public void initialize(String newPassword, String repeat, String oldPassword) {
+    public void initialize(String newPassword, String repeat) {
         this.newPassword = newPassword;
         this.repeat = repeat;
-        this.oldPassword = oldPassword;
     }
 
     @Override
     protected boolean basicChecks() {
         if (newPassword == null || newPassword.isBlank() ||
-                repeat == null || repeat.isBlank() ||
-                oldPassword == null || oldPassword.isBlank()) {
+                repeat == null || repeat.isBlank()) {
             invalidate("All fields are required.");
             return false;
         }
@@ -27,10 +24,7 @@ public class ChangePasswordValidator extends AbstractValidator {
             invalidate("New password and repeat password do not match.");
             return false;
         }
-        if (newPassword.equals(oldPassword)) {
-            invalidate("New password must be different from the old password.");
-            return false;
-        }
+
         return true;
     }
 

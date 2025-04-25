@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.CartItem;
 import com.example.bookshop.entity.Customer;
+import com.example.bookshop.entity.PaymentMethod;
 import com.example.bookshop.entity.Review;
+import com.example.bookshop.entity.ShippingAddress;
 import com.example.bookshop.entity.ShoppingCart;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.BookService;
@@ -75,6 +78,16 @@ public class CustomerPageController {
             return "redirect:/customer/dashboard";
         }
 
+        // Initialize shippingAddress if null
+        if (customer.getShippingAddress() == null) {
+            customer.setShippingAddress(new ShippingAddress());
+        }
+
+        // Initialize paymentMethod if null
+        if (customer.getPaymentMethod() == null) {
+            customer.setPaymentMethod(new PaymentMethod());
+        }
+
         // Add the customer to the model
         model.addAttribute("customer", customer);
         return "customer/profile";
@@ -106,7 +119,7 @@ public class CustomerPageController {
         model.addAttribute("author", author);
         model.addAttribute("publisher", publisher);
         model.addAttribute("category", category);
-        
+
         return "customer/catalog";
     }
 

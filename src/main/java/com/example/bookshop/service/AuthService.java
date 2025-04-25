@@ -160,25 +160,16 @@ public class AuthService {
         return "redirect:/administrator/dashboard";
     }
 
-    public boolean changePassword(String email, String currentPwd, String newPwd, String repeatPwd,
+    public boolean changePassword(String email, String newPwd, String repeatPwd,
             RedirectAttributes ra) {
         // 1) Validate new password first
-        changePasswordValidator.initialize(currentPwd, newPwd, repeatPwd);
+        changePasswordValidator.initialize(newPwd, repeatPwd);
         if (!changePasswordValidator.validate()) {
             ra.addFlashAttribute("error", changePasswordValidator.getError());
             return false;
         }
 
-        // 2) Authenticate current password
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, currentPwd));
-        } catch (Exception ex) {
-            ra.addFlashAttribute("error", "Current password is incorrect.");
-            return false;
-        }
-
-        // 3) Persist hashed new password
+        // 2) Persist hashed new password
         Customer c = customerService.getCustomerByEmail(email);
         Administrator a = administratorService.getAdministratorByEmail(email);
 
@@ -194,7 +185,7 @@ public class AuthService {
         }
         ra.addFlashAttribute("success", "Password changed successfully.");
 
-        // 4) Re-authenticate with new password
+        // 3) Re-authenticate with new password
         try {
             Authentication authResult = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, newPwd));

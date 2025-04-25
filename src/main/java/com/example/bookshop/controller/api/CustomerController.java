@@ -103,7 +103,6 @@ public class CustomerController {
     // Show customer profile page
     @PostMapping("/change-password")
     public String changePassword(@AuthenticationPrincipal CustomUserDetails user,
-            @RequestParam String currentPwd,
             @RequestParam String newPwd,
             @RequestParam String repeatPwd,
             RedirectAttributes ra) {
@@ -111,7 +110,7 @@ public class CustomerController {
         if (user == null)
             return "redirect:/login";
 
-        authService.changePassword(user.getUsername(), currentPwd, newPwd, repeatPwd, ra);
+        authService.changePassword(user.getUsername(), newPwd, repeatPwd, ra);
         return "redirect:/customer/profile";
     }
 
