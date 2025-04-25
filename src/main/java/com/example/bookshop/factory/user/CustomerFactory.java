@@ -5,7 +5,7 @@ import com.example.bookshop.entity.PaymentMethod;
 import com.example.bookshop.entity.ShippingAddress;
 import com.example.bookshop.entity.User;
 
-public class CustomerFactory {
+public class CustomerFactory implements UserFactory {
     private final ShippingAddress shippingAddress;
     private final PaymentMethod paymentMethod;
 
