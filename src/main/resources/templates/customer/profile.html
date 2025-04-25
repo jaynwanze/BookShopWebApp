@@ -15,6 +15,7 @@
         <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="errorMessage"></div>
 
         <form th:action="@{/customers/{id}(id=${customer.id})}" th:object="${customer}" method="post">
+            <input type="hidden" th:field="*{id}"/>
             <input type="hidden" name="_method" value="put" />
             <!-- ---------- basic info ---------- -->
             <h4 class="mt-3">Account&nbsp;Info</h4>

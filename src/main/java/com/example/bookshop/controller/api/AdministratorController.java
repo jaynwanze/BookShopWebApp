@@ -6,20 +6,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.bookshop.entity.Administrator;
 import com.example.bookshop.entity.Book;
+import com.example.bookshop.entity.Customer;
 import com.example.bookshop.security.CustomUserDetails;
+import com.example.bookshop.service.AdministratorService;
 import com.example.bookshop.service.BookService;
+import com.example.bookshop.validation.AddressValidator;
+import com.example.bookshop.validation.CardValidator;
 
 @Controller
 @RequestMapping("/administrators")
 public class AdministratorController {
 
+    private final AdministratorService administratorService;
+
     @Autowired
     private BookService bookService;
+
+    AdministratorController(AdministratorService administratorService) {
+        this.administratorService = administratorService;
+    }
 
     @PostMapping("/books")
     public String createBook(
@@ -80,8 +92,24 @@ public class AdministratorController {
         return "redirect:/administrator/manage-books";
     }
 
-    // @GetMapping("/customers"){
-    // // Logic to retrieve and display customers
-    // return "administrator/customers";
-    // }
+    // Edit customer details
+    @PutMapping("/{id}")
+    public String updateAdmin(@PathVariable Long id, @ModelAttribute("administrator") Administrator admin,
+            BindingResult binding,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        if (userDetails == null || !userDetails.hasRole("ROLE_ADMIN")) {
+            return "redirect:/login";
+        }
+
+        if (binding.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Error updating customer details.");
+            return "redirect:/customer/profile";
+        }
+
+        // Update the administrator details
+        administratorService.updateAdministrator(admin);
+        redirectAttributes.addFlashAttribute("success", "Administrator details updated successfully.");
+        return "redirect:/administrator/profile";
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.bookshop.entity.Administrator;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.Order;
@@ -166,5 +167,23 @@ public class AdministratorPageController {
         List<Order> orders = orderService.findOrdersByCustomerId(id);
         model.addAttribute("orders", orders);
         return "administrator/customer-details";
+    }
+
+    @GetMapping("/profile")
+    public String adminProfilePage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model,
+            RedirectAttributes redirectAttributes) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        // Retrieve the admin by ID
+        Administrator admin = adminService.getAdministratorById(userDetails.getId());
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "Administrator not found.");
+            return "redirect:/administrator/dashboard";
+        }
+
+        // Add the admin to the model
+        model.addAttribute("admin", admin);
+        return "administrator/profile";
     }
 }

@@ -35,4 +35,8 @@ public class AdministratorService {
         Administrator admin = administratorRepository.findById(id).orElse(null);
         return admin != null ? admin.getName() : null;
     }
+
+    public Administrator getAdministratorById (Long id) {
+        return administratorRepository.findById(id).orElse(null);
+    }
 }
