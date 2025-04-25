@@ -18,11 +18,13 @@ import com.example.bookshop.entity.Administrator;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.Order;
+import com.example.bookshop.entity.Review;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.AdministratorService;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.OrderService;
+import com.example.bookshop.service.ReviewService;
 
 @Controller
 @RequestMapping("/administrator")
@@ -39,6 +41,9 @@ public class AdministratorPageController {
 
     @Autowired
     private AdministratorService adminService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/dashboard")
     public String administratorDashboardPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -152,11 +157,14 @@ public class AdministratorPageController {
             return "redirect:/administrator/edit-book/" + id;
         }
 
+        // Retrieve all reviews for this book
+        List<Review> reviews = reviewService.getReviewsForBook(id);
+
         model.addAttribute("currentImage",
                 book.getImage() == null ? null
                         : "data:image/png;base64," +
                                 Base64.getEncoder().encodeToString(book.getImage()));
-
+        model.addAttribute("reviews", reviews);
         return "administrator/book-form-edit";
 
     }

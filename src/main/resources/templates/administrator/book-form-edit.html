@@ -70,7 +70,28 @@
                 Cancel
             </a>
         </form>
+
+        <hr class="my-4">
+
+        <h4>Customer Reviews</h4>
+
+        <!-- no reviews -->
+        <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info">
+            No reviews yet for this title.
+        </div>
+
+        <!-- list reviews -->
+        <div th:each="rv : ${reviews}" class="mb-3 border rounded p-2" th:if="${!#lists.isEmpty(reviews)}">
+            <div class="fw-bold">
+                <span th:text="${rv.rating}">5</span>/5 ★ –
+                <span th:text="${rv.customer.name}">Customer</span>
+                <small class="text-muted" th:text="${#calendars.format(rv.reviewDate,'dd MMM yyyy')}">08 Apr
+                    2025</small>
+            </div>
+            <p class="mb-0" th:text="${rv.comment}">Great read!</p>
+        </div>
     </div>
+
 </body>
 
 </html>
