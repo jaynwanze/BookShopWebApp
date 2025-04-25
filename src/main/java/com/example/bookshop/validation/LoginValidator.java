@@ -1,10 +1,13 @@
 package com.example.bookshop.validation;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class LoginValidator extends AbstractValidator {
 
-    private final String email, plainPwd;
+    private String email, plainPwd;
 
-    public LoginValidator(String email, String plainPwd) {
+    public void initialize(String email, String plainPwd) {
         this.email = email;
         this.plainPwd = plainPwd;
     }

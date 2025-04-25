@@ -4,6 +4,7 @@ import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.Order;
 import com.example.bookshop.entity.ShoppingCart;
 import com.example.bookshop.security.CustomUserDetails;
+import com.example.bookshop.service.AuthService;
 import com.example.bookshop.service.CustomerService;
 import com.example.bookshop.service.DiscountService;
 import com.example.bookshop.service.OrderService;
@@ -40,6 +41,15 @@ public class CustomerController {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private AddressValidator addressValidator;
+
+    @Autowired
+    private CardValidator cardValidator;
+
     // Process form submission to save a customer
     @PostMapping
     public String saveCustomer(Customer customer) {
@@ -54,26 +64,30 @@ public class CustomerController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes) {
 
-        CardValidator v = new CardValidator(customer.getPaymentMethod());
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        // Validate customer details
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        if (binding.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "Error updating customer details.");
             return "redirect:/customer/profile";
         }
 
+        // Validate payment details
+        cardValidator.initialize(customer.getPaymentMethod());
+        if (!cardValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", cardValidator.getError());
+            return "redirect:/customer/profile";
+        }
         // Validate shipping address
-        AddressValidator addressValidator = new AddressValidator(customer.getShippingAddress());
+        addressValidator.initialize(customer.getShippingAddress());
         if (!addressValidator.validate()) {
             redirectAttributes.addFlashAttribute("error", addressValidator.getError());
             return "redirect:/customer/profile";
         }
 
-        if (userDetails == null) {
-            return "redirect:/login";
-        }
-        if (binding.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Error updating customer details.");
-            return "redirect:/customer/profile";
-        }
+        // Update customer details
         customerService.updateCustomer(customer);
         redirectAttributes.addFlashAttribute("success", "Customer details updated successfully.");
         return "redirect:/customer/profile";
@@ -84,6 +98,21 @@ public class CustomerController {
     public String deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return "redirect:/customers";
+    }
+
+    // Show customer profile page
+    @PostMapping("/change-password")
+    public String changePassword(@AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam String currentPwd,
+            @RequestParam String newPwd,
+            @RequestParam String repeatPwd,
+            RedirectAttributes ra) {
+
+        if (user == null)
+            return "redirect:/login";
+
+        authService.changePassword(user.getUsername(), currentPwd, newPwd, repeatPwd, ra);
+        return "redirect:/customer/profile";
     }
 
     // Add item to cart
@@ -134,12 +163,12 @@ public class CustomerController {
 
         // Update shipping and payment info
         Customer customer = customerService.getCustomerById(userDetails.getId());
-        CardValidator v = new CardValidator(customerFromForm.getPaymentMethod());
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        cardValidator.initialize(customerFromForm.getPaymentMethod());
+        if (customerFromForm.getPaymentMethod() == null) {
+            redirectAttributes.addFlashAttribute("error", "Payment method is required.");
             return "redirect:/customer/checkout-page";
         }
-        AddressValidator addressValidator = new AddressValidator(customerFromForm.getShippingAddress());
+        addressValidator.initialize(customerFromForm.getShippingAddress());
         if (!addressValidator.validate()) {
             redirectAttributes.addFlashAttribute("error", addressValidator.getError());
             return "redirect:/customer/checkout-page";
@@ -170,9 +199,9 @@ public class CustomerController {
         }
         // Validate payment method
         Customer customer = customerService.getCustomerById(userDetails.getId());
-        CardValidator v = new CardValidator(customer.getPaymentMethod());
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        cardValidator.initialize(customer.getPaymentMethod());
+        if (customer.getPaymentMethod() == null) {
+            redirectAttributes.addFlashAttribute("error", "Payment method is required.");
             return "redirect:/customer/checkout-page";
         }
         try {

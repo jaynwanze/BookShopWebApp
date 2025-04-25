@@ -14,6 +14,7 @@ import com.example.bookshop.entity.Customer;
 import com.example.bookshop.entity.User;
 import com.example.bookshop.factory.user.AdministratorFactory;
 import com.example.bookshop.factory.user.CustomerFactory;
+import com.example.bookshop.validation.ChangePasswordValidator;
 import com.example.bookshop.validation.LoginValidator;
 import com.example.bookshop.validation.RegisterValidator;
 
@@ -37,15 +38,23 @@ public class AuthService {
     @Autowired
     private HttpServletRequest request;
 
+    @Autowired
+    private RegisterValidator registerValidator;
+
+    @Autowired
+    private LoginValidator loginValidator;
+
+    @Autowired
+    private ChangePasswordValidator changePasswordValidator;
+
     // Register a new Customer
     public String registerCustomer(String email, String name, String rawPassword,
             RedirectAttributes redirectAttributes) {
         // Validate the input
-        RegisterValidator v = new RegisterValidator(
-                email, name, rawPassword);
+        registerValidator.initialize(email, name, rawPassword);
 
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        if (!registerValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", registerValidator.getError());
             return "redirect:/register/customer";
         }
 
@@ -76,9 +85,9 @@ public class AuthService {
     public String loginCustomer(String email, String rawPassword,
             RedirectAttributes redirectAttributes) {
         // Validate the input
-        LoginValidator v = new LoginValidator(email, rawPassword);
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        loginValidator.initialize(email, rawPassword);
+        if (!loginValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", loginValidator.getError());
             return "redirect:/login/customer";
         }
 
@@ -101,11 +110,10 @@ public class AuthService {
             String jobTitle, String department,
             RedirectAttributes redirectAttributes) {
         // Validate the input
-        RegisterValidator v = new RegisterValidator(
-                email, name, rawPassword);
+        registerValidator.initialize(email, name, rawPassword);
 
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
+        if (!registerValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", loginValidator.getError());
             return "redirect:/register/administrator";
         }
         // Create & save Administrator with hashed password
@@ -132,10 +140,10 @@ public class AuthService {
     public String loginAdministrator(String email, String rawPassword,
             RedirectAttributes redirectAttributes) {
         // Validate the input
-        LoginValidator v = new LoginValidator(email, rawPassword);
-        if (!v.validate()) {
-            redirectAttributes.addFlashAttribute("error", v.getError());
-            return "redirect:/administrator/login";
+        loginValidator.initialize(email, rawPassword);
+        if (!loginValidator.validate()) {
+            redirectAttributes.addFlashAttribute("error", loginValidator.getError());
+            return "redirect:/login/administrator";
         }
         // authentication
         try {
@@ -150,6 +158,53 @@ public class AuthService {
 
         // Redirect to admin dashboard
         return "redirect:/administrator/dashboard";
+    }
+
+    public boolean changePassword(String email, String currentPwd, String newPwd, String repeatPwd,
+            RedirectAttributes ra) {
+        // 1) Validate new password first
+        changePasswordValidator.initialize(currentPwd, newPwd, repeatPwd);
+        if (!changePasswordValidator.validate()) {
+            ra.addFlashAttribute("error", changePasswordValidator.getError());
+            return false;
+        }
+
+        // 2) Authenticate current password
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, currentPwd));
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", "Current password is incorrect.");
+            return false;
+        }
+
+        // 3) Persist hashed new password
+        Customer c = customerService.getCustomerByEmail(email);
+        Administrator a = administratorService.getAdministratorByEmail(email);
+
+        if (c == null && a == null) {
+            ra.addFlashAttribute("error", "User not found.");
+            return false;
+        } else if (c != null) {
+            c.setPassword(passwordEncoder.encode(newPwd));
+            customerService.updateCustomer(c);
+        } else if (a != null) {
+            a.setPassword(passwordEncoder.encode(newPwd));
+            administratorService.updateAdministrator(a);
+        }
+        ra.addFlashAttribute("success", "Password changed successfully.");
+
+        // 4) Re-authenticate with new password
+        try {
+            Authentication authResult = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, newPwd));
+            SecurityContextHolder.getContext().setAuthentication(authResult);
+            request.getSession().setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", "Could not auto-login: " + ex.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public void logout() {

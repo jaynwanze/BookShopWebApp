@@ -1,29 +1,36 @@
 package com.example.bookshop.validation;
 
+import org.springframework.stereotype.Component;
 import com.example.bookshop.entity.PaymentMethod;
 
+@Component
 public class CardValidator extends AbstractValidator {
 
-    private final PaymentMethod pm;
-    public CardValidator(PaymentMethod pm){ this.pm=pm; }
+    private PaymentMethod paymentMethod;
 
-    @Override protected boolean basicChecks() {
-        if (pm==null ||
-            pm.getMaskedNumber()==null || pm.getMaskedNumber().isBlank() ||
-            pm.getExpiryDate()==null   || pm.getExpiryDate().isBlank()) {
-            invalidate("All card fields are mandatory");
+    public void initialize(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    @Override
+    protected boolean basicChecks() {
+        if (paymentMethod == null ||
+            paymentMethod.getMaskedNumber() == null || paymentMethod.getMaskedNumber().isBlank() ||
+            paymentMethod.getExpiryDate() == null || paymentMethod.getExpiryDate().isBlank()) {
+            invalidate("All card fields are mandatory.");
             return false;
         }
         return true;
     }
 
-    @Override protected boolean formatChecks() {
-        if (!pm.getMaskedNumber().matches("^\\d{4}-\\d{4}-\\d{4}-\\d{4}$")){
-            invalidate("Card number must be formatted xxxx-xxxx-xxxx-xxxx");
+    @Override
+    protected boolean formatChecks() {
+        if (!paymentMethod.getMaskedNumber().matches("^\\d{4}-\\d{4}-\\d{4}-\\d{4}$")) {
+            invalidate("Card number must be formatted xxxx-xxxx-xxxx-xxxx.");
             return false;
         }
-        if (!pm.getExpiryDate().matches("^(0[1-9]|1[0-2])/\\d{2}$")){
-            invalidate("Expiry must be MM/YY");
+        if (!paymentMethod.getExpiryDate().matches("^(0[1-9]|1[0-2])/\\d{2}$")) {
+            invalidate("Expiry must be in MM/YY format.");
             return false;
         }
         return true;

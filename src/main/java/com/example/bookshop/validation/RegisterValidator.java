@@ -1,11 +1,12 @@
 package com.example.bookshop.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.bookshop.service.AdministratorService;
+import org.springframework.stereotype.Component;
 import com.example.bookshop.service.CustomerService;
+import com.example.bookshop.service.AdministratorService;
 
+@Component
 public class RegisterValidator extends AbstractValidator {
-    private final String email, plainPwd, name;
 
     @Autowired
     private CustomerService customerService;
@@ -13,7 +14,11 @@ public class RegisterValidator extends AbstractValidator {
     @Autowired
     private AdministratorService administratorService;
 
-    public RegisterValidator(String email, String name, String plainPwd) {
+    private String email;
+    private String name;
+    private String plainPwd;
+
+    public void initialize(String email, String name, String plainPwd) {
         this.email = email;
         this.name = name;
         this.plainPwd = plainPwd;
@@ -21,10 +26,10 @@ public class RegisterValidator extends AbstractValidator {
 
     @Override
     protected boolean basicChecks() {
-        if (email == null || email.isBlank()
-                || name == null || name.isBlank()
-                || plainPwd == null || plainPwd.isBlank()) {
-            invalidate("All fields are required");
+        if (email == null || email.isBlank() ||
+                name == null || name.isBlank() ||
+                plainPwd == null || plainPwd.isBlank()) {
+            invalidate("All fields are required.");
             return false;
         }
         return true;
@@ -32,12 +37,12 @@ public class RegisterValidator extends AbstractValidator {
 
     @Override
     protected boolean formatChecks() {
-        if (!email.matches("^[\\w.%+-]+@\\w+\\.\\w{2,}$")) {
-            invalidate("Invalid e-mail address");
+        if (!email.matches("^[\\w.%+-]+@[\\w.-]+\\.\\w{2,}$")) {
+            invalidate("Invalid email format.");
             return false;
         }
         if (plainPwd.length() < 6) {
-            invalidate("Password must be at least 6 characters");
+            invalidate("Password must be at least 6 characters long.");
             return false;
         }
         return true;
@@ -47,10 +52,9 @@ public class RegisterValidator extends AbstractValidator {
     protected boolean domainSpecificChecks() {
         if (customerService.getCustomerByEmail(email) != null ||
                 administratorService.getAdministratorByEmail(email) != null) {
-            invalidate("An account with this e-mail already exists");
+            invalidate("An account with this email already exists.");
             return false;
         }
         return true;
     }
-
 }

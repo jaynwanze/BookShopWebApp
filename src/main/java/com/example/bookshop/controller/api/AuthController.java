@@ -7,8 +7,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.service.AuthService;
 
-import org.springframework.web.bind.annotation.PostMapping;
-
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
@@ -47,7 +45,7 @@ public class AuthController {
             RedirectAttributes redirectAttributes) {
         return authService.loginAdministrator(username, password, redirectAttributes);
     }
-
+   
     @GetMapping("/logout")
     public String logout() {
         authService.logout();

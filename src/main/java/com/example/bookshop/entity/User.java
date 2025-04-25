@@ -1,5 +1,6 @@
 package com.example.bookshop.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +13,7 @@ public abstract class User {
     protected Long id;
     protected String name;
     protected String email;
+    @Column(nullable = false)
     protected String password;
 
     protected User() {
