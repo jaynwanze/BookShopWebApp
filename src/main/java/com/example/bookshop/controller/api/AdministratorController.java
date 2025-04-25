@@ -16,6 +16,7 @@ import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.Customer;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.AdministratorService;
+import com.example.bookshop.service.AuthService;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.validation.AddressValidator;
 import com.example.bookshop.validation.CardValidator;
@@ -28,6 +29,9 @@ public class AdministratorController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private AuthService authService;
 
     AdministratorController(AdministratorService administratorService) {
         this.administratorService = administratorService;
@@ -112,4 +116,19 @@ public class AdministratorController {
         redirectAttributes.addFlashAttribute("success", "Administrator details updated successfully.");
         return "redirect:/administrator/profile";
     }
+
+    // Show customer profile page
+    @PostMapping("/change-password")
+    public String changePassword(@AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam String newPwd,
+            @RequestParam String repeatPwd,
+            RedirectAttributes ra) {
+
+        if (user == null)
+            return "redirect:/login";
+
+        authService.changePassword(user.getUsername(), newPwd, repeatPwd, ra);
+        return "redirect:/customer/profile";
+    }
+
 }
