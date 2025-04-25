@@ -13,13 +13,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.bookshop.entity.Administrator;
 import com.example.bookshop.entity.Book;
-import com.example.bookshop.entity.Customer;
 import com.example.bookshop.security.CustomUserDetails;
 import com.example.bookshop.service.AdministratorService;
 import com.example.bookshop.service.AuthService;
 import com.example.bookshop.service.BookService;
-import com.example.bookshop.validation.AddressValidator;
-import com.example.bookshop.validation.CardValidator;
+import com.example.bookshop.validation.BookValidator;
 
 @Controller
 @RequestMapping("/administrators")
@@ -32,6 +30,9 @@ public class AdministratorController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private BookValidator bookValidator;
 
     AdministratorController(AdministratorService administratorService) {
         this.administratorService = administratorService;
@@ -61,11 +62,23 @@ public class AdministratorController {
             }
         } catch (IOException ex) {
             redirect.addFlashAttribute("error", "Could not read image: " + ex.getMessage());
-            return "redirect:/administrator/add‑book";
+            return "redirect:/administrator/add-book";
         }
 
-        bookService.createBook(title, author, category, publisher, isbn, stockLevel,
+        Book newBook = bookService.createBook(title, author, category, publisher, isbn, stockLevel,
                 price, image);
+
+        if (newBook == null) {
+            redirect.addFlashAttribute("error", "Error creating book. Please try again.");
+            return "redirect:/administrator/add-book";
+        }
+        // Validate the book object using the BookValidator
+        bookValidator.intialize(newBook);
+        if (bookValidator.validate()) {
+            redirect.addFlashAttribute("error", bookValidator.getError());
+            return "redirect:/administrator/add-book";
+        }
+
         model.addAttribute("success", "Book created successfully!");
         return "redirect:/administrator/manage-books";
     }

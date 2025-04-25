@@ -14,6 +14,7 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    
 
     public List<Book> getAllBooks(String sortField, String sortDir) {
         return bookRepository.findAll(buildSort(sortField, sortDir));
@@ -77,5 +78,9 @@ public class BookService {
         Book book = (Book) productFactory.createBook(title, price, stockLevel,
                 author, isbn, category, publisher, image);
         return bookRepository.save(book);
+    }
+
+    public Book getBookByISBN(String isbn) {
+        return bookRepository.findByIsbn(isbn);
     }
 }
